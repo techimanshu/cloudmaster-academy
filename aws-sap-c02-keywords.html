@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS SAP-C02 · Keyword Decoder</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e14;--bg2:#0f1520;--bg3:#141c2b;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --text:#e2e8f0;--muted:#64748b;--dim:#94a3b8;
+  --accent:#f59e0b;--accent2:#fbbf24;
+  --green:#10b981;--blue:#3b82f6;--cyan:#06b6d4;
+  --red:#ef4444;--purple:#8b5cf6;--pink:#ec4899;--orange:#f97316;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+.container{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:2rem 1.5rem 4rem}
+
+/* HEADER */
+.header{text-align:center;padding:2.5rem 0 2rem;border-bottom:1px solid var(--border2);margin-bottom:2rem}
+.header-pre{font-size:10px;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:.75rem}
+.header h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,#f59e0b 0%,#fbbf24 40%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:.5rem}
+.header-sub{font-size:12px;color:var(--muted)}
+.header-hint{display:inline-block;margin-top:1rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:6px;padding:5px 14px;font-size:11px;color:#34d399}
+
+/* SEARCH */
+.search-wrap{margin-bottom:1.75rem;position:relative}
+.search-input{
+  width:100%;padding:11px 16px 11px 42px;
+  background:var(--bg2);border:1px solid var(--border2);border-radius:8px;
+  color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;
+  outline:none;transition:border-color .18s;
+}
+.search-input:focus{border-color:rgba(245,158,11,0.5)}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
+.search-count{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted)}
+
+/* CATEGORY FILTERS */
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.75rem}
+.filter-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 12px;border:1px solid var(--border2);border-radius:20px;background:var(--bg2);color:var(--muted);cursor:pointer;transition:all .15s;letter-spacing:.03em}
+.filter-btn:hover{border-color:var(--border2);color:var(--dim)}
+.filter-btn.active{color:#fff;border-color:transparent}
+.filter-btn[data-cat="all"].active{background:#374151}
+.filter-btn[data-cat="compute"].active{background:rgba(59,130,246,0.3);border-color:rgba(59,130,246,0.5);color:#93c5fd}
+.filter-btn[data-cat="network"].active{background:rgba(16,185,129,0.3);border-color:rgba(16,185,129,0.5);color:#6ee7b7}
+.filter-btn[data-cat="storage"].active{background:rgba(249,115,22,0.3);border-color:rgba(249,115,22,0.5);color:#fdba74}
+.filter-btn[data-cat="database"].active{background:rgba(139,92,246,0.3);border-color:rgba(139,92,246,0.5);color:#c4b5fd}
+.filter-btn[data-cat="security"].active{background:rgba(239,68,68,0.3);border-color:rgba(239,68,68,0.5);color:#fca5a5}
+.filter-btn[data-cat="mgmt"].active{background:rgba(6,182,212,0.3);border-color:rgba(6,182,212,0.5);color:#67e8f9}
+.filter-btn[data-cat="migration"].active{background:rgba(148,163,184,0.2);border-color:rgba(148,163,184,0.4);color:#cbd5e1}
+.filter-btn[data-cat="pattern"].active{background:rgba(245,158,11,0.2);border-color:rgba(245,158,11,0.5);color:#fbbf24}
+
+/* KEYWORD TABLE */
+.table-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:2rem}
+.table-header{display:grid;grid-template-columns:2fr 2fr 3fr;padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border2);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.kw-row{
+  display:grid;grid-template-columns:2fr 2fr 3fr;
+  padding:11px 16px;border-bottom:1px solid var(--border);
+  transition:background .12s;align-items:start;
+}
+.kw-row:last-child{border-bottom:none}
+.kw-row:hover{background:rgba(255,255,255,0.025)}
+.kw-row.hidden{display:none}
+
+.keyword-cell{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start}
+.kw-tag{
+  font-size:11px;padding:2px 8px;border-radius:4px;
+  font-weight:500;white-space:nowrap;
+  background:rgba(245,158,11,0.12);
+  border:1px solid rgba(245,158,11,0.25);
+  color:var(--accent2);
+}
+.kw-tag.secondary{background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.12);color:#a37b10;font-size:10px}
+
+.answer-cell{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start}
+.ans-tag{font-size:11px;padding:2px 9px;border-radius:4px;font-weight:500;white-space:nowrap}
+.ans-tag.compute{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.2)}
+.ans-tag.network{background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.2)}
+.ans-tag.storage{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.2)}
+.ans-tag.database{background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.2)}
+.ans-tag.security{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+.ans-tag.mgmt{background:rgba(6,182,212,0.15);color:#22d3ee;border:1px solid rgba(6,182,212,0.2)}
+.ans-tag.migration{background:rgba(148,163,184,0.12);color:#94a3b8;border:1px solid rgba(148,163,184,0.15)}
+.ans-tag.pattern{background:rgba(245,158,11,0.12);color:#fbbf24;border:1px solid rgba(245,158,11,0.2)}
+
+.why-cell{font-size:11px;color:var(--dim);line-height:1.6}
+.why-cell strong{color:var(--text);font-weight:500}
+
+/* QUICK-FIRE SECTION */
+.qf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:2rem}
+.qf-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.qf-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+.qf-item{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid var(--border);gap:8px}
+.qf-item:last-child{border-bottom:none}
+.qf-q{font-size:11px;color:var(--dim);flex:1}
+.qf-a{font-size:11px;color:#fff;font-weight:500;text-align:right;white-space:nowrap}
+.qf-a.green{color:var(--green)}
+.qf-a.blue{color:#60a5fa}
+.qf-a.amber{color:var(--accent)}
+.qf-a.purple{color:#a78bfa}
+.qf-a.red{color:#f87171}
+
+/* SECTION LABEL */
+.section-label{font-size:10px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.no-results{text-align:center;padding:3rem;color:var(--muted);font-size:12px;display:none}
+
+/* FOOTER */
+.footer{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--muted)}
+.footer a{color:var(--accent);text-decoration:none}
+
+@media(max-width:680px){
+  .table-header{display:none}
+  .kw-row{grid-template-columns:1fr;gap:6px;padding:12px 14px}
+  .why-cell{font-size:11px}
+}
+@media print{body{background:#fff;color:#000}body::before{display:none}.kw-row:hover{background:none}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div class="header-pre">// AWS SAP-C02 · Question Decoder</div>
+  <h1>Keyword → Answer</h1>
+  <div class="header-sub">Spot these words in a question → instantly know the right service or pattern</div>
+  <span class="header-hint">🔍 Use Ctrl+F or the search box below during last-minute review</span>
+</div>
+
+<div class="search-wrap">
+  <span class="search-icon">⌕</span>
+  <input class="search-input" id="search" type="text" placeholder="Search keywords, services, or concepts...">
+  <span class="search-count" id="count"></span>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" data-cat="all">All</button>
+  <button class="filter-btn" data-cat="compute">Compute</button>
+  <button class="filter-btn" data-cat="network">Network</button>
+  <button class="filter-btn" data-cat="storage">Storage</button>
+  <button class="filter-btn" data-cat="database">Database</button>
+  <button class="filter-btn" data-cat="security">Security</button>
+  <button class="filter-btn" data-cat="mgmt">Mgmt / Governance</button>
+  <button class="filter-btn" data-cat="migration">Migration</button>
+  <button class="filter-btn" data-cat="pattern">Design Patterns</button>
+</div>
+
+<div class="table-wrap">
+  <div class="table-header">
+    <span>If you see this keyword…</span>
+    <span>Think this service / concept</span>
+    <span>Why / what to remember</span>
+  </div>
+
+  <!-- ══════════════ COMPUTE ══════════════ -->
+  <div class="kw-row" data-cat="compute" data-text="fault tolerant interruption flexible batch spot">
+    <div class="keyword-cell"><span class="kw-tag">fault-tolerant</span><span class="kw-tag">interruption-tolerant</span><span class="kw-tag">flexible start time</span><span class="kw-tag">batch</span></div>
+    <div class="answer-cell"><span class="ans-tag compute">EC2 Spot Instances</span></div>
+    <div class="why-cell">Spot = cheapest compute but can be interrupted. Safe for batch, genomics, rendering, CI/CD. <strong>Never Spot for databases or anything stateful.</strong></div>
+  </div>
+
+  <div class="kw-row" data-cat="compute" data-text="steady state always on consistent predictable savings plan reserved">
+    <div class="keyword-cell"><span class="kw-tag">steady-state</span><span class="kw-tag">always-on</span><span class="kw-tag">consistent usage</span><span class="kw-tag">predictable</span></div>
+    <div class="answer-cell"><span class="ans-tag compute">Savings Plans</span><span class="ans-tag compute">Reserved Instances</span></div>
+    <div class="why-cell">Savings Plans = more flexible (any instance family). Standard RI = locked family, cheapest. <strong>Compute Savings Plans &gt; EC2 Savings Plans &gt; Standard RI</strong> in flexibility.</div>
+  </div>
+
+  <div class="kw-row" data-cat="compute" data-text="low latency hpc high performance computing cluster placement group tightly coupled">
+    <div class="keyword-cell"><span class="kw-tag">HPC</span><span class="kw-tag">tightly coupled</span><span class="kw-tag">low-latency networking</span><span class="kw-tag">MPI workloads</span></div>
+    <div class="answer-cell"><span class="ans-tag compute">Cluster Placement Group</span></div>
+    <div class="why-cell">Packs instances into same rack for 10 Gbps+ low-latency. Risk: all fail together. <strong>Use Enhanced Networking (ENA/EFA) alongside it for HPC.</strong></div>
+  </div>
+
+  <div class="kw-row" data-cat="compute" data-text="critical instances isolated spread failure resilient seven per az">
+    <div class="keyword-cell"><span class="kw-tag">isolated failure domains</span><span class="kw-tag">critical VMs</span><span class="kw-tag">max availability</span></div>
+    <div class="answer-cell"><span class="ans-tag compute">Spread Placement Group</span></div>
+    <div class="why-cell">Max 7 instances per AZ, each on separate hardware. Best for small number of critical instances that must not fail together.</div>
+  </div>
+
+  <div class="kw-row" data-cat="compute" data-text="kafka hdfs cassandra large distributed partition placement group">
+    <div class="keyword-cell"><span class="kw-tag">Hadoop</span><span class="kw-tag">Kafka</span><span class="kw-tag">Cassandra</span><span class="kw-tag">large distributed</span></div>
+    <div class="answer-cell"><span class="ans-tag compute">Partition Placement Group</span></div>
+    <div class="why-cell">Groups instances into partitions (up to 7/AZ), each partition on separate rack. Instances in same partition can fail together but not cross partitions.</div>
+  </div>
+
+  <div class="kw-row" data-cat="compute" data-text="scale out fast pre-warm fast launch warm pool asg auto scaling">
+    <div class="keyword-cell"><span class="kw-tag">fast scale-out</span><span class="kw-tag">pre-warmed instances</span><span class="kw-tag">reduce launch time</span></div>
+    <div class="answer-cell"><span class="ans-tag compute">ASG Warm Pools</span></div>
+    <div class="why-cell">Pre-initialised instances sitting stopped/running, ready to launch instantly. Eliminates bootstrap time for autoscaling events.</div>
+  </div>
+
+  <div class="kw-row" data-cat="compute" data-text="serverless no server manage containers fargate ecs eks">
+    <div class="keyword-cell"><span class="kw-tag">no server management</span><span class="kw-tag">serverless containers</span><span class="kw-tag">managed infrastructure</span></div>
+    <div class="answer-cell"><span class="ans-tag compute">ECS Fargate</span><span class="ans-tag compute">EKS Fargate</span></div>
+    <div class="why-cell">Fargate = serverless compute for containers. You define CPU/RAM per task; AWS manages underlying hosts. No AMI patching.</div>
+  </div>
+
+  <div class="kw-row" data-cat="compute" data-text="kubernetes existing k8s multi-cloud portable container orchestration eks">
+    <div class="keyword-cell"><span class="kw-tag">existing Kubernetes</span><span class="kw-tag">Kubernetes-native</span><span class="kw-tag">kubectl</span><span class="kw-tag">multi-cloud</span></div>
+    <div class="answer-cell"><span class="ans-tag compute">Amazon EKS</span></div>
+    <div class="why-cell">EKS when portability or existing K8s investment matters. ECS when AWS-only and simpler orchestration is enough. <strong>K8s keyword = EKS every time.</strong></div>
+  </div>
+
+  <div class="kw-row" data-cat="compute" data-text="edge compute lambda at edge cloudfront low latency cdn content delivery">
+    <div class="keyword-cell"><span class="kw-tag">edge compute</span><span class="kw-tag">closest to user</span><span class="kw-tag">CloudFront functions</span></div>
+    <div class="answer-cell"><span class="ans-tag compute">Lambda@Edge</span><span class="ans-tag network">CloudFront</span></div>
+    <div class="why-cell">Lambda@Edge runs at CloudFront PoPs for viewer/origin request manipulation. CloudFront Functions for lightweight header/URL rewrite (&lt;1ms budget).</div>
+  </div>
+
+  <div class="kw-row" data-cat="compute" data-text="on premises hardware aws local outpost low latency data residency">
+    <div class="keyword-cell"><span class="kw-tag">on-premises AWS</span><span class="kw-tag">data residency</span><span class="kw-tag">local processing</span><span class="kw-tag">&lt;1ms on-prem</span></div>
+    <div class="answer-cell"><span class="ans-tag compute">AWS Outposts</span></div>
+    <div class="why-cell">Outposts = AWS rack in your data center. Same APIs, same console. Use when latency or data sovereignty requires compute to stay on-prem.</div>
+  </div>
+
+  <!-- ══════════════ NETWORK ══════════════ -->
+  <div class="kw-row" data-cat="network" data-text="static ip tcp udp non-http voip gaming global accelerator">
+    <div class="keyword-cell"><span class="kw-tag">static IP required</span><span class="kw-tag">TCP/UDP</span><span class="kw-tag">gaming</span><span class="kw-tag">VoIP</span><span class="kw-tag">non-HTTP</span></div>
+    <div class="answer-cell"><span class="ans-tag network">Global Accelerator</span></div>
+    <div class="why-cell">GA = 2 static anycast IPs, routes TCP/UDP over AWS backbone. <strong>Not a CDN.</strong> Use when question mentions static IPs, non-HTTP, or consistent global routing.</div>
+  </div>
+
+  <div class="kw-row" data-cat="network" data-text="http https caching content delivery website cdn cloudfront">
+    <div class="keyword-cell"><span class="kw-tag">HTTP/HTTPS caching</span><span class="kw-tag">static content</span><span class="kw-tag">DDoS protection layer</span><span class="kw-tag">website acceleration</span></div>
+    <div class="answer-cell"><span class="ans-tag network">CloudFront</span></div>
+    <div class="why-cell">CloudFront = CDN, HTTP(S) only, caches content at edge. Comes with Shield Standard free. Integrate with WAF for L7 protection.</div>
+  </div>
+
+  <div class="kw-row" data-cat="network" data-text="dedicated bandwidth consistent latency private connection direct connect on-prem">
+    <div class="keyword-cell"><span class="kw-tag">dedicated bandwidth</span><span class="kw-tag">consistent latency</span><span class="kw-tag">private connection</span><span class="kw-tag">1/10 Gbps link</span></div>
+    <div class="answer-cell"><span class="ans-tag network">AWS Direct Connect</span></div>
+    <div class="why-cell">DX = physical dedicated fiber, not over internet. Consistent throughput. Expensive. <strong>DX + VPN = encrypted DX.</strong> DX alone is NOT encrypted.</div>
+  </div>
+
+  <div class="kw-row" data-cat="network" data-text="encrypted fast setup internet vpn quick site-to-site">
+    <div class="keyword-cell"><span class="kw-tag">quick setup</span><span class="kw-tag">encrypted tunnel</span><span class="kw-tag">internet-based</span><span class="kw-tag">backup connectivity</span></div>
+    <div class="answer-cell"><span class="ans-tag network">Site-to-Site VPN</span></div>
+    <div class="why-cell">VPN is always encrypted (IPSec), quick to set up, goes over internet (variable latency). Use as primary for cost, or as DX backup.</div>
+  </div>
+
+  <div class="kw-row" data-cat="network" data-text="thousands vpcs hub spoke transitive routing transit gateway centralized">
+    <div class="keyword-cell"><span class="kw-tag">many VPCs</span><span class="kw-tag">transitive routing</span><span class="kw-tag">hub-and-spoke</span><span class="kw-tag">centralized egress</span></div>
+    <div class="answer-cell"><span class="ans-tag network">Transit Gateway</span></div>
+    <div class="why-cell">TGW supports transitive routing (A→B→C). VPC peering does NOT. TGW scales to thousands of VPCs. Also connects VPNs and DX together.</div>
+  </div>
+
+  <div class="kw-row" data-cat="network" data-text="two vpcs peering small simple no transitive">
+    <div class="keyword-cell"><span class="kw-tag">two VPCs</span><span class="kw-tag">simple connectivity</span><span class="kw-tag">low cost</span></div>
+    <div class="answer-cell"><span class="ans-tag network">VPC Peering</span></div>
+    <div class="why-cell">Peering = 1:1, no transitive routing, no bandwidth limit, lowest cost. Use TGW instead when you have ≥3 VPCs that all need to communicate.</div>
+  </div>
+
+  <div class="kw-row" data-cat="network" data-text="privatelink expose service private endpoint no internet no peering vpc endpoint interface">
+    <div class="keyword-cell"><span class="kw-tag">expose service privately</span><span class="kw-tag">no VPC peering</span><span class="kw-tag">no internet</span><span class="kw-tag">vendor service access</span></div>
+    <div class="answer-cell"><span class="ans-tag network">AWS PrivateLink</span></div>
+    <div class="why-cell">PrivateLink creates ENI in your VPC pointing to a service in another VPC/account. Traffic never leaves AWS. No overlapping CIDR issues.</div>
+  </div>
+
+  <div class="kw-row" data-cat="network" data-text="s3 dynamodb gateway endpoint no charge private vpc endpoint">
+    <div class="keyword-cell"><span class="kw-tag">S3 from VPC privately</span><span class="kw-tag">DynamoDB from VPC</span><span class="kw-tag">no NAT Gateway cost</span></div>
+    <div class="answer-cell"><span class="ans-tag network">VPC Gateway Endpoint</span></div>
+    <div class="why-cell">Gateway endpoints are FREE for S3 and DynamoDB. They add route table entries. Everything else uses Interface endpoints (charged, powered by PrivateLink).</div>
+  </div>
+
+  <div class="kw-row" data-cat="network" data-text="firewall intrusion detection third party appliance gateway load balancer inspection">
+    <div class="keyword-cell"><span class="kw-tag">third-party firewall</span><span class="kw-tag">inline inspection</span><span class="kw-tag">IDS/IPS appliance</span><span class="kw-tag">network inspection</span></div>
+    <div class="answer-cell"><span class="ans-tag network">Gateway Load Balancer</span></div>
+    <div class="why-cell">GLB transparently passes traffic through third-party virtual appliances (Palo Alto, Fortinet). GENEVE tunneling preserves original packets.</div>
+  </div>
+
+  <div class="kw-row" data-cat="network" data-text="hybrid dns on-premises resolution route 53 resolver inbound outbound">
+    <div class="keyword-cell"><span class="kw-tag">on-prem DNS resolution</span><span class="kw-tag">hybrid DNS</span><span class="kw-tag">resolve AWS from on-prem</span></div>
+    <div class="answer-cell"><span class="ans-tag network">Route 53 Resolver</span></div>
+    <div class="why-cell">Inbound endpoint = on-prem resolves AWS private DNS. Outbound endpoint = AWS resolves on-prem DNS. Both needed for full hybrid DNS.</div>
+  </div>
+
+  <div class="kw-row" data-cat="network" data-text="failover routing policy route 53 health check active passive primary secondary">
+    <div class="keyword-cell"><span class="kw-tag">active-passive failover</span><span class="kw-tag">primary/secondary</span><span class="kw-tag">DR routing</span></div>
+    <div class="answer-cell"><span class="ans-tag network">Route 53 Failover Policy</span></div>
+    <div class="why-cell">Route 53 health checks → failover to secondary if primary unhealthy. Combine with Latency or Weighted policies for more complex routing.</div>
+  </div>
+
+  <!-- ══════════════ STORAGE ══════════════ -->
+  <div class="kw-row" data-cat="storage" data-text="worm immutable object lock regulatory compliance s3">
+    <div class="keyword-cell"><span class="kw-tag">WORM</span><span class="kw-tag">immutable objects</span><span class="kw-tag">regulatory compliance</span><span class="kw-tag">cannot delete</span></div>
+    <div class="answer-cell"><span class="ans-tag storage">S3 Object Lock</span></div>
+    <div class="why-cell">Object Lock = WORM (Write Once Read Many). Compliance mode = even root can't delete. Governance mode = only special IAM permission can delete.</div>
+  </div>
+
+  <div class="kw-row" data-cat="storage" data-text="glacier deep archive cheapest long term archive cold data 7-10 years">
+    <div class="keyword-cell"><span class="kw-tag">7–10 year retention</span><span class="kw-tag">cheapest storage</span><span class="kw-tag">rarely accessed</span><span class="kw-tag">compliance archive</span></div>
+    <div class="answer-cell"><span class="ans-tag storage">S3 Glacier Deep Archive</span></div>
+    <div class="why-cell">Cheapest storage in AWS (~$0.00099/GB). 12-hour retrieval. Use lifecycle rules to tier data automatically. Glacier Instant = ms retrieval but costs more.</div>
+  </div>
+
+  <div class="kw-row" data-cat="storage" data-text="unknown access pattern automatic tiering intelligent-tiering s3">
+    <div class="keyword-cell"><span class="kw-tag">unpredictable access</span><span class="kw-tag">unknown pattern</span><span class="kw-tag">auto-tiering</span></div>
+    <div class="answer-cell"><span class="ans-tag storage">S3 Intelligent-Tiering</span></div>
+    <div class="why-cell">Automatically moves objects between Frequent/Infrequent/Archive tiers. No retrieval fee. Small monitoring charge/object. Best when access pattern is unknown.</div>
+  </div>
+
+  <div class="kw-row" data-cat="storage" data-text="posix nfs shared file system multi-az linux efs elastic file">
+    <div class="keyword-cell"><span class="kw-tag">POSIX file system</span><span class="kw-tag">NFS</span><span class="kw-tag">shared across EC2</span><span class="kw-tag">Linux multi-AZ</span></div>
+    <div class="answer-cell"><span class="ans-tag storage">Amazon EFS</span></div>
+    <div class="why-cell">EFS = managed NFS, scales automatically, multi-AZ. More expensive than EBS. Use when multiple EC2 instances need to share files concurrently.</div>
+  </div>
+
+  <div class="kw-row" data-cat="storage" data-text="smb windows ad active directory fsx windows file server">
+    <div class="keyword-cell"><span class="kw-tag">SMB</span><span class="kw-tag">Windows shares</span><span class="kw-tag">Active Directory integration</span><span class="kw-tag">NTFS</span></div>
+    <div class="answer-cell"><span class="ans-tag storage">FSx for Windows File Server</span></div>
+    <div class="why-cell">FSx Windows = fully managed Windows file server. Integrates with AD, supports DFS namespaces, shadow copies. Choose over EFS for Windows workloads.</div>
+  </div>
+
+  <div class="kw-row" data-cat="storage" data-text="hpc high performance lustre scratch file system machine learning fsx">
+    <div class="keyword-cell"><span class="kw-tag">HPC scratch</span><span class="kw-tag">ML training data</span><span class="kw-tag">sub-millisecond latency</span><span class="kw-tag">Lustre</span></div>
+    <div class="answer-cell"><span class="ans-tag storage">FSx for Lustre</span></div>
+    <div class="why-cell">FSx Lustre integrates with S3 (lazy load). Used for ML, genomics, video processing. Scratch = temporary, no replication. Persistent = durable.</div>
+  </div>
+
+  <div class="kw-row" data-cat="storage" data-text="high iops io2 low latency block storage database ebs provisioned">
+    <div class="keyword-cell"><span class="kw-tag">high IOPS</span><span class="kw-tag">low latency block</span><span class="kw-tag">database storage</span><span class="kw-tag">io1/io2</span></div>
+    <div class="answer-cell"><span class="ans-tag storage">EBS io2 Block Express</span></div>
+    <div class="why-cell">io2 = up to 256,000 IOPS, 99.999% durability. gp3 = general purpose, cheaper, 16,000 IOPS. <strong>io2 for SAP HANA, Oracle, high-perf DB.</strong> gp3 for most workloads.</div>
+  </div>
+
+  <div class="kw-row" data-cat="storage" data-text="cross region replication crr s3 compliance disaster recovery geo redundancy">
+    <div class="keyword-cell"><span class="kw-tag">cross-region S3</span><span class="kw-tag">geo-redundancy</span><span class="kw-tag">compliance copy</span></div>
+    <div class="answer-cell"><span class="ans-tag storage">S3 Cross-Region Replication</span></div>
+    <div class="why-cell">CRR = async replication to another region. SRR = same region (log aggregation, test env copy). Requires versioning enabled on both buckets.</div>
+  </div>
+
+  <!-- ══════════════ DATABASE ══════════════ -->
+  <div class="kw-row" data-cat="database" data-text="multi-region active-active global tables dynamodb low latency worldwide">
+    <div class="keyword-cell"><span class="kw-tag">multi-region active-active</span><span class="kw-tag">global low latency</span><span class="kw-tag">worldwide writes</span></div>
+    <div class="answer-cell"><span class="ans-tag database">DynamoDB Global Tables</span></div>
+    <div class="why-cell">Global Tables = multi-region, multi-active DynamoDB. Sub-second replication. Conflict resolution: last-writer-wins. Use for globally distributed apps needing &lt;100ms anywhere.</div>
+  </div>
+
+  <div class="kw-row" data-cat="database" data-text="dynamodb read latency microsecond cache dax in-memory">
+    <div class="keyword-cell"><span class="kw-tag">DynamoDB slow reads</span><span class="kw-tag">microsecond latency</span><span class="kw-tag">DynamoDB cache</span></div>
+    <div class="answer-cell"><span class="ans-tag database">DynamoDB DAX</span></div>
+    <div class="why-cell">DAX = in-memory cache for DynamoDB, no code change needed. Write-through. Only for DynamoDB. <strong>ElastiCache is wrong here</strong> — requires app code changes.</div>
+  </div>
+
+  <div class="kw-row" data-cat="database" data-text="session store leaderboard pub sub real-time sorted set redis elasticache">
+    <div class="keyword-cell"><span class="kw-tag">session store</span><span class="kw-tag">leaderboard</span><span class="kw-tag">pub/sub</span><span class="kw-tag">sorted sets</span><span class="kw-tag">complex data</span></div>
+    <div class="answer-cell"><span class="ans-tag database">ElastiCache for Redis</span></div>
+    <div class="why-cell">Redis = persistent, replication, complex data structures (sets, hashes, sorted sets), pub/sub, Lua scripting. Memcached = simple cache, multi-threaded, no persistence.</div>
+  </div>
+
+  <div class="kw-row" data-cat="database" data-text="simple cache memcached horizontal scaling multi-threaded no persistence">
+    <div class="keyword-cell"><span class="kw-tag">simple caching</span><span class="kw-tag">multi-threaded</span><span class="kw-tag">no persistence needed</span></div>
+    <div class="answer-cell"><span class="ans-tag database">ElastiCache for Memcached</span></div>
+    <div class="why-cell">Memcached = simpler, no replication, no persistence, scales horizontally by adding nodes. Use Redis for everything else.</div>
+  </div>
+
+  <div class="kw-row" data-cat="database" data-text="aurora rpo rto global database disaster recovery secondary region read replica">
+    <div class="keyword-cell"><span class="kw-tag">RPO &lt;1 second</span><span class="kw-tag">cross-region DR</span><span class="kw-tag">promote secondary region</span></div>
+    <div class="answer-cell"><span class="ans-tag database">Aurora Global Database</span></div>
+    <div class="why-cell">Aurora Global = 1 primary + up to 5 secondary regions. Replication lag &lt;1s. Secondary can be promoted in &lt;1 minute. RDS Cross-Region Read Replica is slower alternative.</div>
+  </div>
+
+  <div class="kw-row" data-cat="database" data-text="graph social network fraud detection relationships neptune">
+    <div class="keyword-cell"><span class="kw-tag">graph database</span><span class="kw-tag">social network</span><span class="kw-tag">fraud detection</span><span class="kw-tag">relationship queries</span></div>
+    <div class="answer-cell"><span class="ans-tag database">Amazon Neptune</span></div>
+    <div class="why-cell">Neptune = managed graph DB, supports Gremlin and SPARQL. Use when question describes entities with complex relationships and graph traversal queries.</div>
+  </div>
+
+  <div class="kw-row" data-cat="database" data-text="immutable ledger audit trail cryptographically verifiable financial qldb">
+    <div class="keyword-cell"><span class="kw-tag">immutable audit trail</span><span class="kw-tag">cryptographically verifiable</span><span class="kw-tag">financial records</span></div>
+    <div class="answer-cell"><span class="ans-tag database">Amazon QLDB</span></div>
+    <div class="why-cell">QLDB = immutable, verifiable ledger. Every change is recorded and verifiable. Use for supply chain, financial systems, medical records needing tamper-proof history.</div>
+  </div>
+
+  <div class="kw-row" data-cat="database" data-text="time series iot sensor metrics timestream data">
+    <div class="keyword-cell"><span class="kw-tag">time-series data</span><span class="kw-tag">IoT metrics</span><span class="kw-tag">sensor data</span><span class="kw-tag">telemetry</span></div>
+    <div class="answer-cell"><span class="ans-tag database">Amazon Timestream</span></div>
+    <div class="why-cell">Timestream = purpose-built time-series DB, 1000x faster than relational for time-series queries. Auto tiers hot/warm/cold data.</div>
+  </div>
+
+  <div class="kw-row" data-cat="database" data-text="olap analytics data warehouse petabyte redshift sql">
+    <div class="keyword-cell"><span class="kw-tag">data warehouse</span><span class="kw-tag">OLAP</span><span class="kw-tag">petabyte scale analytics</span><span class="kw-tag">BI queries</span></div>
+    <div class="answer-cell"><span class="ans-tag database">Amazon Redshift</span></div>
+    <div class="why-cell">Redshift = columnar data warehouse. Redshift Spectrum queries S3 directly. RA3 nodes separate compute/storage. Use for complex SQL analytics over large datasets.</div>
+  </div>
+
+  <!-- ══════════════ SECURITY ══════════════ -->
+  <div class="kw-row" data-cat="security" data-text="fips 140-2 level 3 dedicated hsm hardware security module own keys cloudhsm">
+    <div class="keyword-cell"><span class="kw-tag">FIPS 140-2 Level 3</span><span class="kw-tag">dedicated HSM</span><span class="kw-tag">you manage keys</span><span class="kw-tag">compliance mandate</span></div>
+    <div class="answer-cell"><span class="ans-tag security">AWS CloudHSM</span></div>
+    <div class="why-cell">CloudHSM = single-tenant dedicated hardware, FIPS Level 3. KMS = Level 2, shared (but customer-managed CMKs). <strong>"Customer manages keys on dedicated hardware" = CloudHSM.</strong></div>
+  </div>
+
+  <div class="kw-row" data-cat="security" data-text="envelope encryption kms cmk customer managed key rotation aws managed">
+    <div class="keyword-cell"><span class="kw-tag">envelope encryption</span><span class="kw-tag">key rotation</span><span class="kw-tag">managed encryption</span></div>
+    <div class="answer-cell"><span class="ans-tag security">AWS KMS</span></div>
+    <div class="why-cell">KMS envelope encryption: data encrypted with DEK, DEK encrypted with CMK. AWS-managed CMKs auto-rotate annually. Customer-managed CMKs: you control rotation and policy.</div>
+  </div>
+
+  <div class="kw-row" data-cat="security" data-text="rotate credentials secrets database password api key secrets manager">
+    <div class="keyword-cell"><span class="kw-tag">automatic credential rotation</span><span class="kw-tag">database passwords</span><span class="kw-tag">API keys</span></div>
+    <div class="answer-cell"><span class="ans-tag security">Secrets Manager</span></div>
+    <div class="why-cell">Secrets Manager = auto-rotation (built-in for RDS/Aurora/Redshift), cross-account access, version history. Parameter Store = cheaper, for non-secret config + some secrets but no auto-rotation.</div>
+  </div>
+
+  <div class="kw-row" data-cat="security" data-text="pii sensitive data s3 bucket discovery macie data classification">
+    <div class="keyword-cell"><span class="kw-tag">PII detection</span><span class="kw-tag">sensitive data discovery</span><span class="kw-tag">S3 data classification</span></div>
+    <div class="answer-cell"><span class="ans-tag security">Amazon Macie</span></div>
+    <div class="why-cell">Macie uses ML to discover, classify, and protect sensitive data (PII, financial) in S3. Generates findings in Security Hub. Not for real-time threat detection.</div>
+  </div>
+
+  <div class="kw-row" data-cat="security" data-text="threat detection malicious activity compromised ec2 cryptomining guardduty">
+    <div class="keyword-cell"><span class="kw-tag">threat intelligence</span><span class="kw-tag">compromised instance</span><span class="kw-tag">cryptomining detection</span><span class="kw-tag">anomalous behavior</span></div>
+    <div class="answer-cell"><span class="ans-tag security">Amazon GuardDuty</span></div>
+    <div class="why-cell">GuardDuty analyzes VPC Flow Logs, DNS logs, CloudTrail events using ML + threat intel. Enable org-wide via Organizations. <strong>No performance impact on workloads.</strong></div>
+  </div>
+
+  <div class="kw-row" data-cat="security" data-text="vulnerability scan ec2 ecr container image cve inspector">
+    <div class="keyword-cell"><span class="kw-tag">CVE scanning</span><span class="kw-tag">OS vulnerability</span><span class="kw-tag">container image scan</span><span class="kw-tag">EC2 assessment</span></div>
+    <div class="answer-cell"><span class="ans-tag security">Amazon Inspector</span></div>
+    <div class="why-cell">Inspector v2 = continuous, automated vulnerability scanning for EC2 and ECR images. Integrates with Security Hub. Reports CVEs and network reachability issues.</div>
+  </div>
+
+  <div class="kw-row" data-cat="security" data-text="ddos distributed denial service layer 7 application attack shield advanced waf">
+    <div class="keyword-cell"><span class="kw-tag">DDoS protection</span><span class="kw-tag">volumetric attack</span><span class="kw-tag">application-layer attack</span><span class="kw-tag">cost protection</span></div>
+    <div class="answer-cell"><span class="ans-tag security">Shield Advanced</span><span class="ans-tag security">WAF</span></div>
+    <div class="why-cell">Shield Standard = free, L3/L4 always on. Shield Advanced = $3k/month, L7 protection, 24/7 DRT, cost protection, advanced reporting. WAF blocks L7 patterns (SQL injection, XSS).</div>
+  </div>
+
+  <div class="kw-row" data-cat="security" data-text="scp service control policy deny organization restrict member accounts">
+    <div class="keyword-cell"><span class="kw-tag">restrict member accounts</span><span class="kw-tag">org-wide deny</span><span class="kw-tag">preventive guardrail</span></div>
+    <div class="answer-cell"><span class="ans-tag security">Service Control Policies (SCP)</span></div>
+    <div class="why-cell"><strong>SCPs only restrict, never grant.</strong> Management account is never affected. Effective permissions = IAM policy AND SCP. SCP Allow just removes a restriction, still needs IAM grant.</div>
+  </div>
+
+  <div class="kw-row" data-cat="security" data-text="permission boundary maximum permissions developer sandbox restrict iam">
+    <div class="keyword-cell"><span class="kw-tag">developer sandbox limits</span><span class="kw-tag">max permissions cap</span><span class="kw-tag">delegate IAM creation</span></div>
+    <div class="answer-cell"><span class="ans-tag security">IAM Permission Boundaries</span></div>
+    <div class="why-cell">Permission boundary = cap on what an IAM entity can do regardless of attached policies. Allows you to delegate IAM policy creation to developers without privilege escalation risk.</div>
+  </div>
+
+  <div class="kw-row" data-cat="security" data-text="workforce sso single sign on multiple accounts identity center saml okta azure ad">
+    <div class="keyword-cell"><span class="kw-tag">workforce SSO</span><span class="kw-tag">multiple AWS accounts</span><span class="kw-tag">Okta/Azure AD</span><span class="kw-tag">one login</span></div>
+    <div class="answer-cell"><span class="ans-tag security">IAM Identity Center</span></div>
+    <div class="why-cell">IAM Identity Center (formerly SSO) = modern workforce federation across all org accounts. Permission sets = IAM roles deployed per account. Preferred over legacy SAML federation per account.</div>
+  </div>
+
+  <!-- ══════════════ MGMT / GOVERNANCE ══════════════ -->
+  <div class="kw-row" data-cat="mgmt" data-text="who did what api call history audit cloudtrail compliance">
+    <div class="keyword-cell"><span class="kw-tag">who made API call</span><span class="kw-tag">audit trail</span><span class="kw-tag">compliance investigation</span><span class="kw-tag">account activity</span></div>
+    <div class="answer-cell"><span class="ans-tag mgmt">AWS CloudTrail</span></div>
+    <div class="why-cell">CloudTrail logs every API call (who, what, when, from where). Management events default on. Data events (S3 object ops, Lambda invokes) must be enabled. CloudTrail Lake = long-term queryable audit store.</div>
+  </div>
+
+  <div class="kw-row" data-cat="mgmt" data-text="is service healthy operational metrics alarm cpu memory cloudwatch">
+    <div class="keyword-cell"><span class="kw-tag">CPU/memory metrics</span><span class="kw-tag">service health</span><span class="kw-tag">alarm + notification</span><span class="kw-tag">operational visibility</span></div>
+    <div class="answer-cell"><span class="ans-tag mgmt">Amazon CloudWatch</span></div>
+    <div class="why-cell">CloudWatch = metrics, logs, alarms, dashboards. Logs Insights for queries. Contributor Insights for top-N analysis. Synthetics for canary monitors. <strong>Not for audit — that's CloudTrail.</strong></div>
+  </div>
+
+  <div class="kw-row" data-cat="mgmt" data-text="config drift compliance configuration change rule remediation aws config">
+    <div class="keyword-cell"><span class="kw-tag">configuration compliance</span><span class="kw-tag">config drift detection</span><span class="kw-tag">non-compliant resources</span><span class="kw-tag">auto-remediation</span></div>
+    <div class="answer-cell"><span class="ans-tag mgmt">AWS Config</span></div>
+    <div class="why-cell">Config records resource configuration changes over time. Rules = compliance checks. Remediation = trigger SSM Automation or Lambda to fix. Config ≠ CloudTrail (Config tracks state; CloudTrail tracks actions).</div>
+  </div>
+
+  <div class="kw-row" data-cat="mgmt" data-text="right size ec2 instance recommendation compute optimizer underutilized over-provisioned">
+    <div class="keyword-cell"><span class="kw-tag">right-sizing</span><span class="kw-tag">over-provisioned instances</span><span class="kw-tag">cost optimization recommendations</span></div>
+    <div class="answer-cell"><span class="ans-tag mgmt">Compute Optimizer</span></div>
+    <div class="why-cell">Compute Optimizer uses ML to analyze CloudWatch metrics and recommend optimal EC2 instance types, EBS volumes, Lambda memory, ECS Fargate CPU/RAM.</div>
+  </div>
+
+  <div class="kw-row" data-cat="mgmt" data-text="multi-account deploy stacksets cloudformation ou organizations all regions">
+    <div class="keyword-cell"><span class="kw-tag">deploy across all accounts</span><span class="kw-tag">organization-wide IaC</span><span class="kw-tag">OU-level deployment</span></div>
+    <div class="answer-cell"><span class="ans-tag mgmt">CloudFormation StackSets</span></div>
+    <div class="why-cell">StackSets deploys CloudFormation stacks to multiple accounts/regions. SERVICE_MANAGED + Organizations = automatic deployment to new accounts added to target OUs. No manual trust setup.</div>
+  </div>
+
+  <div class="kw-row" data-cat="mgmt" data-text="automated multi-account landing zone control tower account factory guardrails">
+    <div class="keyword-cell"><span class="kw-tag">automated landing zone</span><span class="kw-tag">account vending</span><span class="kw-tag">guardrails</span><span class="kw-tag">new account setup</span></div>
+    <div class="answer-cell"><span class="ans-tag mgmt">AWS Control Tower</span></div>
+    <div class="why-cell">Control Tower = automated multi-account setup built on Organizations. Account Factory = self-service new account provisioning. Guardrails = preventive (SCPs) + detective (Config rules).</div>
+  </div>
+
+  <div class="kw-row" data-cat="mgmt" data-text="share resources across accounts ram resource access manager subnet transit gateway">
+    <div class="keyword-cell"><span class="kw-tag">share subnets</span><span class="kw-tag">share Transit Gateway</span><span class="kw-tag">share Route 53 Resolver rules</span><span class="kw-tag">cross-account resources</span></div>
+    <div class="answer-cell"><span class="ans-tag mgmt">AWS Resource Access Manager (RAM)</span></div>
+    <div class="why-cell">RAM shares actual AWS resources (not IAM access) with other accounts or org units. Key sharable: VPC subnets, TGW, Route 53 Resolver rules, License Manager, Service Catalog portfolios.</div>
+  </div>
+
+  <div class="kw-row" data-cat="mgmt" data-text="patch os ec2 fleet run command ssm systems manager automation">
+    <div class="keyword-cell"><span class="kw-tag">patch EC2 fleet</span><span class="kw-tag">run commands remotely</span><span class="kw-tag">no SSH required</span><span class="kw-tag">compliance patching</span></div>
+    <div class="answer-cell"><span class="ans-tag mgmt">AWS Systems Manager</span></div>
+    <div class="why-cell">SSM Patch Manager for OS patching, Run Command for remote execution, Session Manager for shell access (no bastion needed), Automation for runbooks. All agentless-friendly with SSM Agent.</div>
+  </div>
+
+  <!-- ══════════════ MIGRATION ══════════════ -->
+  <div class="kw-row" data-cat="migration" data-text="lift shift server vm rehost mgn application migration service sms">
+    <div class="keyword-cell"><span class="kw-tag">lift-and-shift server</span><span class="kw-tag">VM migration</span><span class="kw-tag">rehost</span><span class="kw-tag">any OS to EC2</span></div>
+    <div class="answer-cell"><span class="ans-tag migration">AWS MGN (Application Migration Service)</span></div>
+    <div class="why-cell">MGN = preferred server migration tool (replaced SMS). Continuous block-level replication. Near-zero downtime cutover. Works for any source OS. <strong>SMS is deprecated — choose MGN.</strong></div>
+  </div>
+
+  <div class="kw-row" data-cat="migration" data-text="database migration homogeneous heterogeneous oracle mysql aurora dms">
+    <div class="keyword-cell"><span class="kw-tag">database migration</span><span class="kw-tag">homogeneous</span><span class="kw-tag">heterogeneous (Oracle→Aurora)</span></div>
+    <div class="answer-cell"><span class="ans-tag migration">AWS DMS</span><span class="ans-tag migration">AWS SCT</span></div>
+    <div class="why-cell">Homogeneous (same engine) → DMS only. Heterogeneous (different engine) → SCT first for schema conversion, then DMS for data. DMS can replicate ongoing changes (CDC).</div>
+  </div>
+
+  <div class="kw-row" data-cat="migration" data-text="offline large dataset petabyte slow bandwidth snowball physical device">
+    <div class="keyword-cell"><span class="kw-tag">large data offline</span><span class="kw-tag">slow internet link</span><span class="kw-tag">80TB physical device</span><span class="kw-tag">&gt;1 week transfer time</span></div>
+    <div class="answer-cell"><span class="ans-tag migration">AWS Snowball Edge</span></div>
+    <div class="why-cell">Calculate: data ÷ bandwidth × 8 = seconds. If &gt;1 week → Snowball (80TB). Multiple Snowballs for &gt;80TB. Snowmobile for &gt;10PB. Snowball Edge Compute adds EC2 for on-device processing.</div>
+  </div>
+
+  <div class="kw-row" data-cat="migration" data-text="ongoing sync nfs smb on-prem to s3 efs scheduled transfer datasync">
+    <div class="keyword-cell"><span class="kw-tag">ongoing file sync</span><span class="kw-tag">NFS/SMB to S3/EFS</span><span class="kw-tag">scheduled transfers</span><span class="kw-tag">migrate file data online</span></div>
+    <div class="answer-cell"><span class="ans-tag migration">AWS DataSync</span></div>
+    <div class="why-cell">DataSync = online, scheduled, high-speed file transfer. Handles encryption, integrity verification, bandwidth throttling. <strong>Not for permanent hybrid access</strong> — that's Storage Gateway.</div>
+  </div>
+
+  <div class="kw-row" data-cat="migration" data-text="hybrid storage on-prem access cloud nfs smb iscsi storage gateway file volume tape">
+    <div class="keyword-cell"><span class="kw-tag">permanent hybrid access</span><span class="kw-tag">on-prem cache + cloud</span><span class="kw-tag">tape replacement</span><span class="kw-tag">Storage Gateway</span></div>
+    <div class="answer-cell"><span class="ans-tag migration">AWS Storage Gateway</span></div>
+    <div class="why-cell">Storage Gateway = ongoing hybrid. File GW (NFS/SMB → S3), Volume GW (iSCSI block → EBS snapshots), Tape GW (VTL → S3/Glacier). Not for one-time migration — use DataSync for that.</div>
+  </div>
+
+  <div class="kw-row" data-cat="migration" data-text="discovery dependency map on-prem servers ads application discovery service agent agentless">
+    <div class="keyword-cell"><span class="kw-tag">discover on-prem servers</span><span class="kw-tag">dependency mapping</span><span class="kw-tag">utilization data</span></div>
+    <div class="answer-cell"><span class="ans-tag migration">Application Discovery Service</span></div>
+    <div class="why-cell">ADS Agent = detailed (processes, network connections, performance over time). ADS Agentless = VMware vCenter only, less detail. Data feeds into Migration Hub for tracking.</div>
+  </div>
+
+  <!-- ══════════════ DESIGN PATTERNS ══════════════ -->
+  <div class="kw-row" data-cat="pattern" data-text="decouple async queue producer consumer sqs message">
+    <div class="keyword-cell"><span class="kw-tag">decouple components</span><span class="kw-tag">async processing</span><span class="kw-tag">queue</span><span class="kw-tag">producer-consumer</span></div>
+    <div class="answer-cell"><span class="ans-tag pattern">Amazon SQS</span></div>
+    <div class="why-cell">SQS = pull-based queue, at-least-once delivery. Standard = unordered, high throughput. FIFO = exactly-once, ordered, 300 TPS. <strong>Decouple keyword → SQS</strong> almost always.</div>
+  </div>
+
+  <div class="kw-row" data-cat="pattern" data-text="fan out multiple subscribers push notification sns pub sub topic">
+    <div class="keyword-cell"><span class="kw-tag">fan-out</span><span class="kw-tag">multiple subscribers</span><span class="kw-tag">push notifications</span><span class="kw-tag">pub/sub</span></div>
+    <div class="answer-cell"><span class="ans-tag pattern">Amazon SNS</span></div>
+    <div class="why-cell">SNS = push to multiple endpoints (SQS, Lambda, HTTP, email, SMS). SNS→SQS fan-out pattern = reliable delivery to multiple queues. SNS does not persist messages.</div>
+  </div>
+
+  <div class="kw-row" data-cat="pattern" data-text="event driven saas cross account event bus eventbridge routing rules">
+    <div class="keyword-cell"><span class="kw-tag">event routing rules</span><span class="kw-tag">SaaS events</span><span class="kw-tag">cross-account events</span><span class="kw-tag">schema registry</span></div>
+    <div class="answer-cell"><span class="ans-tag pattern">Amazon EventBridge</span></div>
+    <div class="why-cell">EventBridge = advanced event routing with rules (content-based filtering). Receives events from AWS services, SaaS apps (Zendesk, Datadog), custom apps. Replaces CloudWatch Events.</div>
+  </div>
+
+  <div class="kw-row" data-cat="pattern" data-text="workflow orchestration multi-step state machine retry error handling step functions">
+    <div class="keyword-cell"><span class="kw-tag">multi-step workflow</span><span class="kw-tag">state machine</span><span class="kw-tag">retry + error handling</span><span class="kw-tag">human approval step</span></div>
+    <div class="answer-cell"><span class="ans-tag pattern">AWS Step Functions</span></div>
+    <div class="why-cell">Step Functions = visual workflow with states. Standard = long-running, exactly-once. Express = high-volume, at-least-once. Use for any orchestrated multi-step process with branching or retries.</div>
+  </div>
+
+  <div class="kw-row" data-cat="pattern" data-text="real-time streaming kinesis data streams analytics processing consumer">
+    <div class="keyword-cell"><span class="kw-tag">real-time streaming</span><span class="kw-tag">custom consumer apps</span><span class="kw-tag">replay events</span><span class="kw-tag">millisecond latency</span></div>
+    <div class="answer-cell"><span class="ans-tag pattern">Kinesis Data Streams</span></div>
+    <div class="why-cell">KDS = real-time, you manage shards and consumers, 1-365 day retention, replay. Firehose = near-real-time (~60s buffer), serverless, direct delivery to S3/Redshift/OpenSearch. KDS when you need consumers.</div>
+  </div>
+
+  <div class="kw-row" data-cat="pattern" data-text="microservices service mesh app mesh envoy proxy observability traffic management">
+    <div class="keyword-cell"><span class="kw-tag">service mesh</span><span class="kw-tag">traffic management</span><span class="kw-tag">canary deployment</span><span class="kw-tag">service-to-service observability</span></div>
+    <div class="answer-cell"><span class="ans-tag pattern">AWS App Mesh</span></div>
+    <div class="why-cell">App Mesh = managed service mesh using Envoy proxy. Traffic shifting, circuit breaking, retries, and distributed tracing between microservices. Works with ECS, EKS, EC2.</div>
+  </div>
+
+  <div class="kw-row" data-cat="pattern" data-text="blue green canary deployment zero downtime rollback codedeploy traffic shift">
+    <div class="keyword-cell"><span class="kw-tag">blue/green deployment</span><span class="kw-tag">canary release</span><span class="kw-tag">zero-downtime deploy</span><span class="kw-tag">instant rollback</span></div>
+    <div class="answer-cell"><span class="ans-tag pattern">AWS CodeDeploy</span><span class="ans-tag network">ALB weighted routing</span></div>
+    <div class="why-cell">CodeDeploy manages blue/green for EC2, ECS, Lambda. ALB weighted target groups for gradual traffic shifting. Route 53 weighted routing for DNS-level blue/green.</div>
+  </div>
+
+  <div class="kw-row" data-cat="pattern" data-text="rto rpo disaster recovery pilot light warm standby active active multi-site">
+    <div class="keyword-cell"><span class="kw-tag">RTO/RPO requirements</span><span class="kw-tag">disaster recovery strategy</span><span class="kw-tag">pilot light</span><span class="kw-tag">warm standby</span></div>
+    <div class="answer-cell"><span class="ans-tag pattern">DR Strategy Selection</span></div>
+    <div class="why-cell">Backup/Restore (hours RTO, cheapest) → Pilot Light (core services always on, scale on disaster) → Warm Standby (scaled-down full copy) → Multi-Site Active/Active (minutes RTO, most expensive).</div>
+  </div>
+
+  <div class="no-results" id="no-results">No keywords found matching your search.</div>
+</div>
+
+<!-- QUICK-FIRE REFERENCE -->
+<div class="section-label">Quick-fire: always / never rules</div>
+<div class="qf-grid">
+  <div class="qf-card">
+    <div class="qf-title">⚡ "X or Y" decision rules</div>
+    <div class="qf-item"><span class="qf-q">ECS vs EKS?</span><span class="qf-a blue">K8s keyword → EKS</span></div>
+    <div class="qf-item"><span class="qf-q">SQS vs SNS?</span><span class="qf-a blue">Queue vs Fan-out</span></div>
+    <div class="qf-item"><span class="qf-q">DAX vs ElastiCache?</span><span class="qf-a blue">DynamoDB → DAX</span></div>
+    <div class="qf-item"><span class="qf-q">CloudFront vs GA?</span><span class="qf-a blue">HTTP→CF, TCP/UDP→GA</span></div>
+    <div class="qf-item"><span class="qf-q">DX vs VPN?</span><span class="qf-a blue">Consistent BW → DX</span></div>
+    <div class="qf-item"><span class="qf-q">Redis vs Memcached?</span><span class="qf-a blue">Complex data → Redis</span></div>
+    <div class="qf-item"><span class="qf-q">DataSync vs Storage GW?</span><span class="qf-a blue">One-time→DS, Ongoing→SGW</span></div>
+    <div class="qf-item"><span class="qf-q">KMS vs CloudHSM?</span><span class="qf-a blue">FIPS L3 → CloudHSM</span></div>
+  </div>
+  <div class="qf-card">
+    <div class="qf-title">🚫 Never choose these when…</div>
+    <div class="qf-item"><span class="qf-q">Stateful/DB workload</span><span class="qf-a red">Never Spot</span></div>
+    <div class="qf-item"><span class="qf-q">No transitive routing needed</span><span class="qf-a red">Don't over-use TGW</span></div>
+    <div class="qf-item"><span class="qf-q">DynamoDB cache</span><span class="qf-a red">Not ElastiCache → DAX</span></div>
+    <div class="qf-item"><span class="qf-q">SMS is mentioned</span><span class="qf-a red">Deprecated → use MGN</span></div>
+    <div class="qf-item"><span class="qf-q">Grant perms via SCP</span><span class="qf-a red">SCPs don't grant</span></div>
+    <div class="qf-item"><span class="qf-q">One Zone-IA for primary</span><span class="qf-a red">Loses data if AZ fails</span></div>
+    <div class="qf-item"><span class="qf-q">CloudTrail for metrics</span><span class="qf-a red">That's CloudWatch</span></div>
+    <div class="qf-item"><span class="qf-q">Config for API audit</span><span class="qf-a red">Config=state, CT=actions</span></div>
+  </div>
+  <div class="qf-card">
+    <div class="qf-title">✅ Always true on this exam</div>
+    <div class="qf-item"><span class="qf-q">Multi-AZ = ?</span><span class="qf-a green">HA, not performance</span></div>
+    <div class="qf-item"><span class="qf-q">Read Replica = ?</span><span class="qf-a green">Read scaling, not HA</span></div>
+    <div class="qf-item"><span class="qf-q">DX encrypted?</span><span class="qf-a green">No — add VPN over DX</span></div>
+    <div class="qf-item"><span class="qf-q">SCPs affect mgmt acct?</span><span class="qf-a green">No — never</span></div>
+    <div class="qf-item"><span class="qf-q">VPC Peering transitive?</span><span class="qf-a green">No — use TGW</span></div>
+    <div class="qf-item"><span class="qf-q">Macie purpose?</span><span class="qf-a green">PII in S3 only</span></div>
+    <div class="qf-item"><span class="qf-q">CloudHSM FIPS level?</span><span class="qf-a green">Level 3 (KMS=Level 2)</span></div>
+    <div class="qf-item"><span class="qf-q">Standard RI change family?</span><span class="qf-a green">No — use Convertible</span></div>
+  </div>
+  <div class="qf-card">
+    <div class="qf-title">🔢 Numbers to memorize</div>
+    <div class="qf-item"><span class="qf-q">Snowball Edge capacity</span><span class="qf-a amber">80 TB usable</span></div>
+    <div class="qf-item"><span class="qf-q">Snowmobile threshold</span><span class="qf-a amber">&gt;10 PB</span></div>
+    <div class="qf-item"><span class="qf-q">Spread PG max/AZ</span><span class="qf-a amber">7 instances</span></div>
+    <div class="qf-item"><span class="qf-q">Aurora Global RPO</span><span class="qf-a amber">&lt;1 second</span></div>
+    <div class="qf-item"><span class="qf-q">Aurora replicas max</span><span class="qf-a amber">15 read replicas</span></div>
+    <div class="qf-item"><span class="qf-q">SQS FIFO max TPS</span><span class="qf-a amber">300 TPS (3000 w/ batching)</span></div>
+    <div class="qf-item"><span class="qf-q">Shield Advanced cost</span><span class="qf-a amber">$3,000/month</span></div>
+    <div class="qf-item"><span class="qf-q">Kinesis default retention</span><span class="qf-a amber">24h (max 365 days)</span></div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>SAP-C02 Keyword Decoder · Pair with <a href="aws-sap-c02-cheatsheet.html">Domain Cheatsheet</a> for complete coverage</p>
+</div>
+
+</div>
+
+<script>
+const rows = document.querySelectorAll('.kw-row');
+const searchInput = document.getElementById('search');
+const countEl = document.getElementById('count');
+const noResults = document.getElementById('no-results');
+let activeFilter = 'all';
+
+function updateCount(visible){
+  countEl.textContent = visible < rows.length ? `${visible} / ${rows.length}` : '';
+}
+
+function applyFilters(){
+  const q = searchInput.value.toLowerCase().trim();
+  let visible = 0;
+  rows.forEach(r => {
+    const text = (r.dataset.text || '') + ' ' + r.textContent.toLowerCase();
+    const catMatch = activeFilter === 'all' || r.dataset.cat === activeFilter;
+    const searchMatch = !q || text.includes(q);
+    const show = catMatch && searchMatch;
+    r.classList.toggle('hidden', !show);
+    if(show) visible++;
+  });
+  updateCount(visible);
+  noResults.style.display = visible === 0 ? 'block' : 'none';
+}
+
+searchInput.addEventListener('input', applyFilters);
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.cat;
+    applyFilters();
+  });
+});
+
+updateCount(rows.length);
+</script>
+</body>
+</html>

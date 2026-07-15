@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practice Exam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #111827;
+      --panel2: #172033;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --accent: #ffb703;
+      --accent2: #60a5fa;
+      --correct: #22c55e;
+      --wrong: #ef4444;
+      --border: #2b3957;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #07111f, #0f172a);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 18px 80px; }
+    .header {
+      background: rgba(17,24,39,0.95);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .header h1 { font-size: 28px; margin-bottom: 8px; color: var(--accent); }
+    .header p { color: var(--muted); line-height: 1.6; }
+    .meta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+    .pill { background: var(--panel2); border: 1px solid var(--border); border-radius: 999px; padding: 7px 12px; font-size: 13px; color: var(--muted); }
+    .question-list { display: grid; gap: 16px; }
+    .card { background: rgba(17,24,39,0.95); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    .card-top { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+    .qnum { background: var(--accent); color: #111827; border-radius: 999px; padding: 4px 9px; font-size: 12px; font-weight: 700; }
+    .domain { color: var(--accent2); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .scenario { background: #172033; border-left: 3px solid var(--accent2); padding: 12px 14px; border-radius: 10px; color: var(--muted); margin-bottom: 12px; line-height: 1.6; }
+    .question { font-weight: 600; line-height: 1.5; margin-bottom: 12px; }
+    .options { display: grid; gap: 10px; }
+    .option-btn {
+      text-align: left; background: #0f172a; border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: 0.2s ease;
+    }
+    .option-btn:hover { border-color: var(--accent2); }
+    .option-btn.selected { border-color: var(--accent2); background: #172033; }
+    .option-btn.correct { border-color: var(--correct); background: rgba(34,197,94,0.12); color: #dcfce7; }
+    .option-btn.wrong { border-color: var(--wrong); background: rgba(239,68,68,0.12); color: #fee2e2; }
+    .explain { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: #172033; border: 1px solid var(--border); color: var(--muted); line-height: 1.6; display: none; }
+    .explain.show { display: block; }
+    .explain strong { color: var(--accent); }
+    .back-btn { display: inline-block; margin-bottom: 18px; color: var(--accent2); text-decoration: none; font-weight: 600; }
+    @media (max-width: 700px) { .wrap { padding: 16px 12px 60px; } .header { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back-btn" href="index.html">← Back to Home</a>
+    <div class="header">
+      <h1 id="examTitle">Scenario Practice Exam</h1>
+      <p id="examSubtitle">Answer 50 scenario-based questions designed for this certification track.</p>
+      <div class="meta">
+        <div class="pill" id="examType">Exam Type</div>
+        <div class="pill" id="questionCount">50 Questions</div>
+      </div>
+    </div>
+    <div class="question-list" id="questionList"></div>
+  </div>
+
+  <script>
+    const examData = {
+      'cloud-practitioner': {
+        title: 'AWS Cloud Practitioner Practice Exam',
+        subtitle: '50 scenario-based questions focused on core AWS concepts, billing, security, and architecture.',
+        type: 'Cloud Practitioner',
+        templates: [
+          { domain: 'IAM', scenario: 'A startup is launching a new product and needs to give developers access to an S3 bucket without sharing long-lived credentials.', question: 'Which AWS feature should the team use first?', options: ['AWS Access Key ID only', 'IAM users with passwords', 'IAM roles with temporary credentials', 'Root account directly'], answer: 'IAM roles with temporary credentials', explanation: 'IAM roles provide temporary credentials and are the recommended least-privilege approach for applications and services.' },
+          { domain: 'Cost', scenario: 'The finance team wants to reduce monthly AWS spend while keeping important workloads available.', question: 'Which approach is most suitable?', options: ['Move all resources to on-prem', 'Use AWS Cost Explorer and Rightsizing', 'Disable all monitoring', 'Increase instance sizes'], answer: 'Use AWS Cost Explorer and Rightsizing', explanation: 'Rightsizing and cost analysis help control spend without sacrificing performance.' },
+          { domain: 'Storage', scenario: 'A company needs to archive old customer data that is rarely accessed and must be durable.', question: 'Which service is the best fit?', options: ['Amazon S3 Standard', 'Amazon S3 Glacier', 'Amazon EBS', 'Amazon RDS'], answer: 'Amazon S3 Glacier', explanation: 'Amazon S3 Glacier is designed for low-cost archival storage with infrequent access.' },
+          { domain: 'Resilience', scenario: 'An ecommerce application must remain available even if one Availability Zone fails.', question: 'What design should be used?', options: ['Single AZ deployment', 'Multi-AZ deployment', 'One large EC2 instance', 'Offline backup only'], answer: 'Multi-AZ deployment', explanation: 'Multi-AZ design improves availability and durability for critical workloads.' },
+          { domain: 'Security', scenario: 'A security team wants to observe network traffic and detect suspicious behavior in a VPC.', question: 'Which AWS capability should they use?', options: ['Amazon CloudWatch only', 'AWS CloudTrail only', 'Amazon VPC Flow Logs and AWS GuardDuty', 'Amazon SNS only'], answer: 'Amazon VPC Flow Logs and AWS GuardDuty', explanation: 'Flow Logs capture traffic data and GuardDuty detects suspicious behavior.' },
+          { domain: 'Networking', scenario: 'A company needs private communication between applications hosted in different subnets inside one VPC.', question: 'What is the most direct approach?', options: ['Use the public internet', 'Use private IP addressing inside the VPC', 'Use an external VPN only', 'Use a public load balancer'], answer: 'Use private IP addressing inside the VPC', explanation: 'Private IPs within the VPC enable secure internal communication without exposing traffic to the internet.' },
+          { domain: 'Serverless', scenario: 'A team wants to run code in response to file uploads without managing servers.', question: 'Which AWS service fits best?', options: ['Amazon EC2', 'AWS Lambda', 'Amazon RDS', 'Amazon EMR'], answer: 'AWS Lambda', explanation: 'Lambda is a serverless compute service that runs code in response to events.' },
+          { domain: 'Monitoring', scenario: 'Operations wants alerts whenever CPU usage exceeds a threshold for a web server.', question: 'Which service should they configure?', options: ['Amazon S3', 'Amazon CloudWatch', 'Amazon Route 53', 'AWS IAM'], answer: 'Amazon CloudWatch', explanation: 'CloudWatch provides metrics, alarms, and monitoring for AWS resources.' },
+          { domain: 'Support', scenario: 'A business needs help with a production incident during off-hours and wants a faster support experience.', question: 'Which AWS support option is most appropriate?', options: ['Basic support only', 'AWS Business Support', 'AWS Developer Support', 'AWS Free Tier'], answer: 'AWS Business Support', explanation: 'Business Support offers faster response and more guidance for production concerns.' },
+          { domain: 'Shared Responsibility', scenario: 'A customer is responsible for managing the operating system and application patches on a virtual server.', question: 'What type of deployment is this?', options: ['AWS-managed service only', 'Infrastructure as a Service', 'Serverless only', 'Storage-only'], answer: 'Infrastructure as a Service', explanation: 'IaaS requires the customer to manage the OS and application layer while AWS handles the underlying infrastructure.' }
+        ]
+      },
+      'ai-practitioner': {
+        title: 'AWS AI Practitioner Practice Exam',
+        subtitle: '50 scenario-based questions focused on machine learning, generative AI, MLOps, and responsible AI.',
+        type: 'AI Practitioner',
+        templates: [
+          { domain: 'Generative AI', scenario: 'A team wants to build a chatbot that answers customer support questions using foundation models.', question: 'Which AWS service should they evaluate first?', options: ['Amazon EC2', 'Amazon Bedrock', 'Amazon S3', 'AWS IAM'], answer: 'Amazon Bedrock', explanation: 'Amazon Bedrock helps teams build generative AI applications with foundation models.' },
+          { domain: 'Data', scenario: 'A data science team needs a fast way to prepare and label training data.', question: 'Which feature is most suitable?', options: ['Amazon QuickSight', 'Amazon SageMaker Ground Truth', 'Amazon EBS', 'AWS WAF'], answer: 'Amazon SageMaker Ground Truth', explanation: 'Ground Truth helps create labeled datasets for machine learning.' },
+          { domain: 'Modeling', scenario: 'A company wants to train and tune a model without managing infrastructure manually.', question: 'Which service should they select?', options: ['AWS Lambda', 'Amazon SageMaker', 'Amazon Aurora', 'Amazon CloudFront'], answer: 'Amazon SageMaker', explanation: 'SageMaker provides managed tools for building, training, and deploying ML models.' },
+          { domain: 'Security', scenario: 'A team needs to protect prompts and sensitive data used by an AI application.', question: 'What should they prioritize?', options: ['Disable encryption', 'Apply least-privilege access and data governance', 'Use public S3 buckets', 'Turn off logging'], answer: 'Apply least-privilege access and data governance', explanation: 'AI workloads should use strong access controls and governance to protect data.' },
+          { domain: 'Explainability', scenario: 'A business wants to understand why a model made a specific prediction.', question: 'Which principle is most relevant?', options: ['Cost optimization only', 'Explainability and transparency', 'Public data only', 'Zero logging'], answer: 'Explainability and transparency', explanation: 'Explainability helps stakeholders understand model behavior and build trust.' },
+          { domain: 'MLOps', scenario: 'A team wants repeatable deployment of ML models across environments.', question: 'Which practice is most useful?', options: ['Manual copy-paste scripts', 'CI/CD and versioning', 'Deleting old models', 'Disabling monitoring'], answer: 'CI/CD and versioning', explanation: 'MLOps relies on automation, versioning, and repeatable deployment pipelines.' },
+          { domain: 'Compliance', scenario: 'An organization needs to track AI usage and audit model actions.', question: 'Which capability should they implement?', options: ['No logging', 'Audit trails and governance', 'Anonymous access', 'Long-lived secrets'], answer: 'Audit trails and governance', explanation: 'Auditability supports compliance and oversight of AI systems.' },
+          { domain: 'Inference', scenario: 'A product team wants low-latency responses for real-time recommendations.', question: 'Which design is most appropriate?', options: ['Offline-only inference', 'Real-time inference with optimized deployment', 'Storing outputs in paper files', 'Manual human review only'], answer: 'Real-time inference with optimized deployment', explanation: 'Real-time inference requires deployment patterns that balance latency and scale.' },
+          { domain: 'Responsible AI', scenario: 'A team is concerned that a model may amplify bias in predictions.', question: 'What should they do first?', options: ['Ignore the issue', 'Evaluate data and model fairness', 'Delete all model logs', 'Disable all validation'], answer: 'Evaluate data and model fairness', explanation: 'Fairness evaluation helps detect and reduce bias in AI systems.' },
+          { domain: 'Multimodal', scenario: 'A company wants to combine text and image data in one AI solution.', question: 'Which capability is most relevant?', options: ['Single-format only', 'Multi-modal AI support', 'Manual spreadsheet processes', 'Static website only'], answer: 'Multi-modal AI support', explanation: 'Multi-modal AI systems combine different data types like text and images.' }
+        ]
+      },
+      'sa-associate': {
+        title: 'AWS Solutions Architect Associate Practice Exam',
+        subtitle: '50 scenario-based questions focused on architecture, networking, storage, and resiliency.',
+        type: 'Solutions Architect Associate',
+        templates: [
+          { domain: 'VPC', scenario: 'A company needs to connect multiple applications in a private network and keep traffic isolated.', question: 'What AWS foundation should they use?', options: ['A single public subnet', 'A VPC with subnets and route tables', 'A public S3 bucket only', 'A single EC2 instance'], answer: 'A VPC with subnets and route tables', explanation: 'A VPC provides isolated network boundaries for AWS resources.' },
+          { domain: 'Connectivity', scenario: 'A firm wants to connect its on-premises data center to AWS securely.', question: 'Which AWS option is most suitable?', options: ['Internet-only access', 'AWS Direct Connect or VPN', 'Public DNS only', 'Amazon S3 alone'], answer: 'AWS Direct Connect or VPN', explanation: 'Direct Connect and VPN provide secure hybrid connectivity.' },
+          { domain: 'Storage', scenario: 'A team needs durable file storage that can be shared across multiple EC2 instances.', question: 'Which service fits best?', options: ['Amazon EBS', 'Amazon EFS', 'Amazon S3 Glacier', 'Amazon DynamoDB'], answer: 'Amazon EFS', explanation: 'EFS provides scalable shared file storage for Linux workloads.' },
+          { domain: 'Database', scenario: 'A business needs a managed relational database with automatic backups.', question: 'Which service should be chosen?', options: ['Amazon RDS', 'Amazon S3', 'Amazon Lambda', 'Amazon EC2'], answer: 'Amazon RDS', explanation: 'RDS is a managed relational database service with built-in backups and maintenance.' },
+          { domain: 'Load Balancing', scenario: 'A web application receives variable traffic and needs to distribute it across healthy instances.', question: 'Which service should be used?', options: ['Amazon Route 53 only', 'Elastic Load Balancing', 'AWS Snowball', 'AWS IAM'], answer: 'Elastic Load Balancing', explanation: 'Load balancing helps distribute traffic across healthy targets.' },
+          { domain: 'Disaster Recovery', scenario: 'A company needs a backup strategy for a critical application in another region.', question: 'Which pattern is most appropriate?', options: ['Single-region deployment', 'Cross-region backup and failover', 'Delete backups weekly', 'Use one EC2 instance only'], answer: 'Cross-region backup and failover', explanation: 'Cross-region design improves resilience and disaster recovery readiness.' },
+          { domain: 'Edge', scenario: 'A retailer needs faster content delivery to global users.', question: 'Which AWS service should they use?', options: ['Amazon CloudFront', 'Amazon Athena', 'Amazon Redshift', 'AWS CodeBuild'], answer: 'Amazon CloudFront', explanation: 'CloudFront accelerates content delivery with edge locations.' },
+          { domain: 'Serverless', scenario: 'A team wants to process events without running servers for backend logic.', question: 'Which service is ideal?', options: ['AWS Lambda', 'Amazon EC2', 'Amazon Redshift', 'AWS Config'], answer: 'AWS Lambda', explanation: 'Lambda enables event-driven serverless compute.' },
+          { domain: 'Security', scenario: 'A team needs to restrict access to an application to approved IP ranges only.', question: 'What should they implement?', options: ['Open security groups', 'Security group and ACL rules', 'Delete all logs', 'Disable encryption'], answer: 'Security group and ACL rules', explanation: 'Security groups and NACLs help enforce network-level access controls.' },
+          { domain: 'Scaling', scenario: 'A web service must handle sudden traffic bursts without manual intervention.', question: 'Which capability should be used?', options: ['Static allocation only', 'Auto Scaling', 'Manual reboot only', 'Single instance constant size'], answer: 'Auto Scaling', explanation: 'Auto Scaling adjusts capacity to match changing demand.' }
+        ]
+      },
+      'sap-c02': {
+        title: 'AWS Solutions Architect Professional Practice Exam',
+        subtitle: '50 scenario-based questions focused on enterprise architecture, governance, migration, and multi-account design.',
+        type: 'Solutions Architect Professional',
+        templates: [
+          { domain: 'Multi-Account', scenario: 'A large enterprise wants separate accounts for development, test, and production with centralized governance.', question: 'Which AWS design is most suitable?', options: ['Single shared account', 'Multi-account landing zone', 'One public subnet only', 'Use a single IAM user everywhere'], answer: 'Multi-account landing zone', explanation: 'A multi-account approach improves isolation, security, and governance for enterprises.' },
+          { domain: 'Governance', scenario: 'The central compliance team wants policy enforcement across the organization.', question: 'What should they use first?', options: ['Manual spreadsheets', 'AWS Organizations with SCPs', 'Single EC2 instance', 'Public S3 bucket'], answer: 'AWS Organizations with SCPs', explanation: 'AWS Organizations and Service Control Policies help enforce guardrails at scale.' },
+          { domain: 'Migration', scenario: 'A company needs to migrate a large legacy workload with minimal downtime.', question: 'Which pattern should the architect choose?', options: ['Rebuild from scratch only', 'Wave-based migration with phased cutover', 'Delete old system immediately', 'Only use on-prem hosting'], answer: 'Wave-based migration with phased cutover', explanation: 'Phased migration reduces risk and downtime during large-scale moves.' },
+          { domain: 'Hybrid', scenario: 'A global business needs secure connectivity between regions and on-premises sites.', question: 'Which architecture fits best?', options: ['Only public internet', 'Hub-and-spoke with VPN and Direct Connect', 'Single public subnet', 'One standalone database'], answer: 'Hub-and-spoke with VPN and Direct Connect', explanation: 'A hub-and-spoke design supports secure and scalable hybrid connectivity.' },
+          { domain: 'Data', scenario: 'A company needs to move huge datasets into AWS while keeping egress costs low.', question: 'Which AWS service should be evaluated?', options: ['Amazon CloudFront', 'AWS Snowball', 'Amazon Route 53', 'AWS Lambda'], answer: 'AWS Snowball', explanation: 'Snowball is useful for large-scale data transfer when network transfer is impractical.' },
+          { domain: 'DR', scenario: 'A business needs resilient recovery for critical systems in a different region.', question: 'Which approach is best?', options: ['Single-region backup only', 'Active-active or active-passive failover', 'One EC2 instance in one AZ', 'No backups'], answer: 'Active-active or active-passive failover', explanation: 'Enterprise disaster recovery plans require region-based failover strategies.' },
+          { domain: 'Automation', scenario: 'An enterprise wants to standardize deployments and reduce configuration drift.', question: 'What should they adopt?', options: ['Manual documentation only', 'Infrastructure as Code', 'Public access to secrets', 'Manual snapshots only'], answer: 'Infrastructure as Code', explanation: 'IaC improves repeatability, speed, and governance.' },
+          { domain: 'Security', scenario: 'A security team wants centralized control over access for all accounts.', question: 'Which capability should they implement?', options: ['Local account credentials only', 'Centralized identity federation and access management', 'Open public S3 buckets', 'Disable CloudTrail'], answer: 'Centralized identity federation and access management', explanation: 'Federation and centralized identity reduce complexity and strengthen control.' },
+          { domain: 'Observability', scenario: 'An operations team needs to understand application health across multiple accounts and regions.', question: 'Which approach is effective?', options: ['One dashboard per team manually', 'Centralized monitoring and logging', 'Delete logs after 24 hours', 'Ignore alarms'], answer: 'Centralized monitoring and logging', explanation: 'Centralization improves visibility and incident response across large estates.' },
+          { domain: 'Cost', scenario: 'A large organization needs to control AWS spend across many teams and projects.', question: 'What architectural practice helps most?', options: ['No tagging', 'Cost allocation tagging and governance', 'Unlimited support plans', 'No budgets'], answer: 'Cost allocation tagging and governance', explanation: 'Tagging and governance help allocate costs and enforce spending discipline.' }
+        ]
+      }
+    };
+
+    function buildQuestions(templates, count) {
+      return Array.from({ length: count }, (_, idx) => {
+        const base = templates[idx % templates.length];
+        return {
+          id: idx + 1,
+          domain: base.domain,
+          scenario: `${base.scenario} (Scenario ${idx + 1})`,
+          question: base.question,
+          options: base.options,
+          answer: base.answer,
+          explanation: base.explanation
+        };
+      });
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const examKey = params.get('exam') || 'cloud-practitioner';
+    const selectedExam = examData[examKey] || examData['cloud-practitioner'];
+    const questions = buildQuestions(selectedExam.templates, 50);
+
+    document.getElementById('examTitle').textContent = selectedExam.title;
+    document.getElementById('examSubtitle').textContent = selectedExam.subtitle;
+    document.getElementById('examType').textContent = selectedExam.type;
+    document.getElementById('questionCount').textContent = `${questions.length} Questions`;
+
+    const questionList = document.getElementById('questionList');
+
+    questions.forEach((q, index) => {
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="qnum">Q${index + 1}</span>
+          <span class="domain">${q.domain}</span>
+        </div>
+        <div class="scenario"><strong>Scenario:</strong> ${q.scenario}</div>
+        <div class="question">${q.question}</div>
+        <div class="options"></div>
+        <div class="explain"></div>
+      `;
+      const optionsContainer = card.querySelector('.options');
+      q.options.forEach((option) => {
+        const button = document.createElement('button');
+        button.className = 'option-btn';
+        button.textContent = option;
+        button.addEventListener('click', () => {
+          const buttons = card.querySelectorAll('.option-btn');
+          buttons.forEach((btn) => btn.classList.remove('selected', 'correct', 'wrong'));
+          button.classList.add('selected');
+          if (option === q.answer) {
+            button.classList.add('correct');
+          } else {
+            button.classList.add('wrong');
+            buttons.forEach((btn) => {
+              if (btn.textContent === q.answer) btn.classList.add('correct');
+            });
+          }
+          const explain = card.querySelector('.explain');
+          explain.innerHTML = `<strong>Why:</strong> ${q.explanation}`;
+          explain.classList.add('show');
+        });
+        optionsContainer.appendChild(button);
+      });
+      questionList.appendChild(card);
+    });
+  </script>
+</body>
+</html>

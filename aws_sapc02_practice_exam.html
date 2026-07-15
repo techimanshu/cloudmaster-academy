@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS SAP-C02 Practice Exam</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --surface3: #1f2d45;
+    --border: rgba(99,179,237,0.12);
+    --border2: rgba(99,179,237,0.22);
+    --accent: #f59e0b;
+    --accent2: #3b82f6;
+    --accent3: #10b981;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --correct: #10b981;
+    --correct-bg: rgba(16,185,129,0.1);
+    --correct-border: rgba(16,185,129,0.35);
+    --wrong: #ef4444;
+    --wrong-bg: rgba(239,68,68,0.1);
+    --wrong-border: rgba(239,68,68,0.35);
+    --reveal-bg: rgba(16,185,129,0.08);
+    --reveal-border: rgba(16,185,129,0.3);
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Sora', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Grid bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .shell { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  /* Header */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 0 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px; background: var(--accent);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 13px; font-weight: 600; color: #000;
+  }
+  .logo-text { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  .logo-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 1px; }
+  .header-stats { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .stat-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 12px;
+    font-size: 12px; font-family: var(--mono); color: var(--text2);
+  }
+  .stat-pill span { color: var(--accent); font-weight: 600; }
+
+  /* Progress */
+  .progress-wrap { margin-bottom: 24px; }
+  .progress-labels { display: flex; justify-content: space-between; margin-bottom: 7px; font-size: 12px; font-family: var(--mono); color: var(--text3); }
+  .progress-track {
+    height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px; transition: width 0.4s ease;
+  }
+
+  /* Filter bar */
+  .filter-bar {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;
+  }
+  .filter-btn {
+    font-family: var(--mono); font-size: 11px; padding: 5px 12px;
+    border-radius: 5px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text2);
+    cursor: pointer; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+  .filter-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
+  /* Question card */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .q-card:hover { border-color: var(--border2); }
+  .q-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .q-num {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    color: #000; background: var(--accent);
+    border-radius: 5px; padding: 3px 9px; flex-shrink: 0; margin-top: 1px;
+  }
+  .q-meta { flex: 1; }
+  .q-domain {
+    font-size: 10px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 1px;
+    color: var(--accent2); font-weight: 600; margin-bottom: 3px;
+  }
+  .q-status-badge {
+    font-size: 10px; font-family: var(--mono); padding: 2px 8px;
+    border-radius: 4px; float: right; margin-top: 2px;
+  }
+  .status-unanswered { background: var(--surface3); color: var(--text3); border: 1px solid var(--border); }
+  .status-correct { background: var(--correct-bg); color: var(--correct); border: 1px solid var(--correct-border); }
+  .status-wrong { background: var(--wrong-bg); color: var(--wrong); border: 1px solid var(--wrong-border); }
+
+  /* Scenario */
+  .q-scenario {
+    margin: 14px 20px 0;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 6px 6px 0;
+    font-size: 13px; color: var(--text2); line-height: 1.65;
+  }
+  .scenario-label {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent2); font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .q-question {
+    padding: 14px 20px 6px;
+    font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.6;
+  }
+
+  /* Options */
+  .q-options { padding: 4px 20px 16px; }
+  .opt {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 11px 14px; margin-bottom: 8px;
+    border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface2); cursor: pointer;
+    transition: all 0.15s; font-size: 13px; color: var(--text2);
+    line-height: 1.55;
+  }
+  .opt:hover { border-color: var(--border2); color: var(--text); background: var(--surface3); }
+  .opt-letter {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    width: 22px; height: 22px; border-radius: 4px;
+    border: 1px solid var(--border2); display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; margin-top: 1px;
+    color: var(--text3); background: var(--surface); transition: all 0.15s;
+  }
+  .opt.correct { border-color: var(--correct-border); background: var(--correct-bg); color: var(--correct); cursor: default; }
+  .opt.correct .opt-letter { background: var(--correct); color: #fff; border-color: var(--correct); }
+  .opt.wrong { border-color: var(--wrong-border); background: var(--wrong-bg); color: var(--wrong); cursor: default; }
+  .opt.wrong .opt-letter { background: var(--wrong); color: #fff; border-color: var(--wrong); }
+  .opt.reveal { border-color: var(--correct-border); background: var(--correct-bg); color: var(--correct); cursor: default; }
+  .opt.reveal .opt-letter { background: var(--correct); color: #fff; border-color: var(--correct); }
+  .opt.disabled { cursor: default; pointer-events: none; }
+  .opt-icon { margin-left: auto; flex-shrink: 0; font-size: 14px; }
+
+  /* Explanation */
+  .explanation {
+    margin: 0 20px 16px;
+    padding: 14px 16px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; font-size: 13px; color: var(--text2); line-height: 1.65;
+    display: none; animation: fadeIn 0.3s ease;
+  }
+  .explanation.show { display: block; }
+  .exp-label {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent); font-weight: 600; margin-bottom: 8px;
+  }
+  .exp-correct { color: var(--correct); font-weight: 600; }
+  .exp-body { color: var(--text2); }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Score panel */
+  .score-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 32px; text-align: center;
+    margin-bottom: 24px; display: none;
+  }
+  .score-panel.show { display: block; }
+  .score-big { font-size: 72px; font-weight: 700; font-family: var(--mono); line-height: 1; margin-bottom: 4px; }
+  .score-grade { font-size: 18px; color: var(--text2); margin-bottom: 24px; }
+  .score-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .score-stat { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .score-stat .val { font-size: 26px; font-weight: 600; font-family: var(--mono); }
+  .score-stat .lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--mono); margin-top: 3px; }
+  .reset-btn {
+    font-family: var(--mono); font-size: 13px; padding: 11px 28px;
+    border-radius: 7px; border: none; background: var(--accent);
+    color: #000; font-weight: 600; cursor: pointer; transition: opacity 0.15s;
+  }
+  .reset-btn:hover { opacity: 0.85; }
+
+  /* Sticky top nav */
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(10,14,26,0.92); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px; display: flex; gap: 12px; align-items: center;
+    margin-bottom: 28px;
+  }
+  .sticky-score {
+    font-family: var(--mono); font-size: 12px; color: var(--text2);
+    margin-left: auto;
+  }
+  .sticky-score b { color: var(--accent); }
+
+  /* Tags */
+  .domain-tag {
+    display: inline-block; font-size: 10px; font-family: var(--mono);
+    padding: 2px 8px; border-radius: 3px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  /* Section */
+  .section-label {
+    font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--text3); margin: 32px 0 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .score-grid { grid-template-columns: repeat(2, 1fr); }
+    .header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">AWS</div>
+      <div>
+        <div class="logo-text">SAP-C02 Practice Exam</div>
+        <div class="logo-sub">Solutions Architect Professional · 50 Questions</div>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-pill">Total &nbsp;<span id="total-count">50</span></div>
+      <div class="stat-pill">Answered &nbsp;<span id="ans-count">0</span></div>
+      <div class="stat-pill">Score &nbsp;<span id="score-count">0%</span></div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-labels">
+      <span id="prog-label">0 / 50 answered</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="score-panel" class="score-panel">
+    <div class="score-big" id="final-pct">-</div>
+    <div class="score-grade" id="final-grade">-</div>
+    <div class="score-grid">
+      <div class="score-stat"><div class="val" id="fs-correct" style="color:var(--correct)">0</div><div class="lbl">Correct</div></div>
+      <div class="score-stat"><div class="val" id="fs-wrong" style="color:var(--wrong)">0</div><div class="lbl">Wrong</div></div>
+      <div class="score-stat"><div class="val" id="fs-skip" style="color:var(--text3)">0</div><div class="lbl">Skipped</div></div>
+      <div class="score-stat"><div class="val" id="fs-pct" style="color:var(--accent)">0%</div><div class="lbl">Accuracy</div></div>
+    </div>
+    <button class="reset-btn" onclick="resetExam()">↺ &nbsp;Restart Exam</button>
+  </div>
+
+  <div id="questions-container"></div>
+
+</div>
+
+<script>
+const questions = [
+  // ── ON-PREMISES & HYBRID ──────────────────────────────
+  {
+    domain:"Hybrid Connectivity",
+    type:"hybrid",
+    scenario:"A manufacturing company has 10 Gbps of data flowing between its on-premises data centre and AWS every day. They currently use a Site-to-Site VPN but are experiencing high latency and packet loss affecting their ERP system.",
+    question:"Which solution provides the MOST reliable and consistent network performance between on-premises and AWS?",
+    options:["Upgrade to multiple Site-to-Site VPNs in ECMP configuration to increase bandwidth.","Provision AWS Direct Connect with a dedicated 10 Gbps connection and configure a private virtual interface (VIF) to the VPC.","Use AWS DataSync over the existing VPN to optimise data transfer.","Deploy an AWS Storage Gateway in the on-premises data centre to cache frequently accessed data."],
+    correct:1,
+    explanation:"AWS Direct Connect provides a dedicated private network connection from on-premises to AWS, bypassing the public internet entirely. A 10 Gbps dedicated connection eliminates the latency and packet loss inherent to internet-based VPN tunnels. A private VIF then connects directly to the VPC. Option A (ECMP VPN) still traverses the public internet. Option C (DataSync) is a data transfer service, not a network solution. Option D (Storage Gateway) caches data locally but doesn't fix the connectivity issue."
+  },
+  {
+    domain:"Migration Strategy",
+    type:"hybrid",
+    scenario:"A bank runs 2,000 virtual machines on-premises using VMware vSphere. The CTO wants to migrate to AWS over 18 months with minimal disruption. The team has no AWS expertise and wants to continue using VMware operational tooling during the transition.",
+    question:"Which migration approach requires the LEAST re-training and operational change during the transition period?",
+    options:["Use AWS Application Migration Service (MGN) to lift and shift all VMs to EC2 immediately.","Deploy VMware Cloud on AWS, migrate VMs using vMotion, then gradually modernise workloads.","Use AWS SMS (Server Migration Service) to replicate and convert all VMware VMs to AMIs.","Re-platform all applications to containers using AWS App2Container before migration."],
+    correct:1,
+    explanation:"VMware Cloud on AWS allows the bank to run VMware workloads natively on dedicated AWS infrastructure using the same VMware tools (vCenter, vSphere, NSX). Teams can use vMotion for live migration with zero downtime and continue using familiar operational tooling while gradually modernising. Option A (MGN) requires immediate re-platforming and AWS operational knowledge. Option C (SMS) converts VMs to AMIs, losing VMware tooling compatibility. Option D (App2Container) is a major re-platforming effort requiring significant expertise."
+  },
+  {
+    domain:"Disaster Recovery",
+    type:"hybrid",
+    scenario:"A hospital has a critical patient records system running on-premises. Regulations require data to remain on-premises, but the hospital wants cloud-based DR with an RTO of 4 hours and RPO of 1 hour. Budget is limited.",
+    question:"Which DR strategy meets the requirements at the LOWEST cost?",
+    options:["Pilot Light: Replicate data to AWS using AWS Storage Gateway, keep minimal AWS resources running, scale up during a disaster.","Warm Standby: Run a scaled-down version of the system on EC2 with RDS Multi-AZ at all times.","Active-Active: Run the full system in both on-premises and AWS simultaneously.","Backup and Restore: Use AWS Backup to snapshot on-premises data to S3 every hour, restore to EC2 when needed."],
+    correct:0,
+    explanation:"Pilot Light is the optimal choice for a 4-hour RTO and 1-hour RPO on a limited budget. Storage Gateway continuously replicates data to AWS (satisfying the 1-hour RPO). During a disaster, minimal pre-provisioned AWS resources (database, AMIs) are 'lit up' and scaled to full capacity within 4 hours. Option B (Warm Standby) costs more due to always-running resources. Option C (Active-Active) is the most expensive. Option D (Backup and Restore) typically achieves RTO of hours to days, and restoring from scratch may exceed the 4-hour RTO."
+  },
+  {
+    domain:"Storage Gateway",
+    type:"hybrid",
+    scenario:"A media company stores 500 TB of video archives on-premises on NAS. Editors frequently access files from the last 30 days, but older content is rarely accessed. They want to move to AWS while maintaining low-latency access for recent files.",
+    question:"Which AWS Storage Gateway configuration is MOST appropriate?",
+    options:["Volume Gateway in stored mode — stores all data on-premises with async backups to S3.","Volume Gateway in cached mode — primary data in S3, frequently accessed data cached locally.","File Gateway — presents S3 as an NFS/SMB share, with a local cache for recently accessed objects.","Tape Gateway — replaces physical tape with virtual tapes stored in S3 Glacier."],
+    correct:2,
+    explanation:"File Gateway is ideal for NAS replacement scenarios. It presents S3 as a standard NFS/SMB file share that editors can access using existing tools. Frequently accessed files (last 30 days) are served from the local cache providing low latency. Older files are retrieved from S3 transparently. Option A (Volume, stored mode) keeps all data on-premises, not offloading storage to AWS. Option B (Volume, cached mode) works at block level, not file level — incompatible with NAS workflows. Option D (Tape Gateway) is for backup/archival use cases, not active file access."
+  },
+  {
+    domain:"Direct Connect",
+    type:"hybrid",
+    scenario:"An enterprise uses AWS Direct Connect (1 Gbps) for its primary on-premises connection. They need a cost-effective backup path that activates automatically if Direct Connect fails, without provisioning a second Direct Connect circuit.",
+    question:"What is the MOST cost-effective high-availability configuration?",
+    options:["Order a second 1 Gbps Direct Connect circuit from a different Direct Connect location as a backup.","Configure a Site-to-Site VPN as a backup path, use BGP with lower local preference on the VPN so Direct Connect is always preferred.","Use AWS Transit Gateway with route propagation to automatically failover to a regional VPN.","Deploy a software VPN on EC2 using OpenVPN to create a backup tunnel."],
+    correct:1,
+    explanation:"A Site-to-Site VPN as a Direct Connect backup is the standard AWS-recommended approach. BGP is used to set route preference: Direct Connect routes are preferred (higher local preference or more specific routes), and the VPN automatically becomes the active path if Direct Connect fails. This is highly cost-effective as VPN charges are minimal compared to a second Direct Connect circuit. Option A works but is significantly more expensive. Option C adds Transit Gateway cost unnecessarily. Option D requires managing EC2 instances and is not production-grade without significant engineering effort."
+  },
+  {
+    domain:"Identity Federation",
+    type:"hybrid",
+    scenario:"A company uses Microsoft Active Directory on-premises with 5,000 users. They are adopting AWS services and need employees to use their existing AD credentials to access the AWS Console and CLI without creating separate IAM users.",
+    question:"Which solution enables SSO to AWS using existing AD credentials with the LEAST ongoing maintenance?",
+    options:["Create IAM users for each AD user and configure password sync manually.","Deploy an ADFS server on-premises and configure SAML federation with AWS IAM Identity Center.","Use AWS Directory Service (AD Connector) with AWS IAM Identity Center to proxy authentication to on-premises AD and assign permission sets.","Deploy AWS Managed Microsoft AD in AWS and establish a forest trust with on-premises AD."],
+    correct:2,
+    explanation:"AD Connector + IAM Identity Center is the lowest-maintenance approach. AD Connector acts as a proxy, forwarding authentication requests to the on-premises AD without syncing any directory data to AWS. IAM Identity Center provides the SSO portal and assigns permission sets (equivalent to IAM roles) to AD groups. No ADFS infrastructure is needed. Option A is the worst approach — 5,000 IAM users are unmanageable. Option B (ADFS) requires deploying, patching, and maintaining ADFS servers. Option D creates a full AD replica in AWS — higher cost and operational overhead than AD Connector."
+  },
+  {
+    domain:"Data Transfer",
+    type:"hybrid",
+    scenario:"A genomics company needs to transfer 2 PB of sequencing data from on-premises to Amazon S3 for analysis. Their internet connection is 1 Gbps. They need the transfer completed within 2 weeks.",
+    question:"What is the FASTEST and MOST practical data transfer method?",
+    options:["Use AWS DataSync over the 1 Gbps internet connection — 2 PB will transfer in approximately 18 days.","Order multiple AWS Snowball Edge Storage Optimised devices, load data in parallel, ship to AWS.","Upgrade the internet connection to 10 Gbps and use DataSync.","Use S3 Transfer Acceleration over the existing 1 Gbps connection."],
+    correct:1,
+    explanation:"2 PB over 1 Gbps at 100% utilisation would take ~185 days — not 18. Multiple Snowball Edge devices (each 80 TB usable) can be loaded in parallel on-premises, then shipped to AWS for ingest into S3. With ~25 devices and parallel loading, this is achievable in 2 weeks. Option A is mathematically impossible within 2 weeks. Option C — upgrading to 10 Gbps takes weeks to provision and still takes ~18 days at full utilisation. Option D (Transfer Acceleration) optimises internet transfers but doesn't overcome the fundamental bandwidth constraint for 2 PB."
+  },
+  {
+    domain:"Outposts",
+    type:"hybrid",
+    scenario:"A financial trading firm requires sub-millisecond latency for its matching engine. Regulations require data to stay within a specific physical data centre. They want to use AWS services but cannot tolerate the latency to an AWS region.",
+    question:"Which AWS service allows them to run AWS infrastructure inside their own data centre?",
+    options:["AWS Local Zones — extend AWS to metro areas closer to end users.","AWS Wavelength — deploy infrastructure at 5G network edges.","AWS Outposts — rack-and-stack AWS infrastructure on-premises in the customer's data centre.","AWS Direct Connect — dedicated private connectivity reducing latency to the AWS region."],
+    correct:2,
+    explanation:"AWS Outposts delivers AWS-managed compute and storage hardware installed within the customer's own data centre. This provides genuine AWS services (EC2, EBS, RDS, EKS) running locally with single-digit millisecond latency, while data remains physically on-premises satisfying regulatory requirements. Option A (Local Zones) extends AWS to metro areas but data still leaves the customer's premises. Option B (Wavelength) targets 5G edge use cases. Option D (Direct Connect) reduces latency to the AWS region but doesn't meet sub-millisecond requirements or keep data in-premises."
+  },
+  {
+    domain:"Backup & Recovery",
+    type:"hybrid",
+    scenario:"A retail company uses on-premises tape backups managed by Veeam. Tapes are stored off-site but retrieval takes 24–48 hours. They want to replace tapes with cloud-based backups while keeping Veeam as the backup software.",
+    question:"Which AWS solution integrates with Veeam and replaces off-site tape storage?",
+    options:["Configure Veeam to back up directly to Amazon S3 using the S3-compatible endpoint.","Deploy AWS Storage Gateway Tape Gateway, present virtual tapes to Veeam, backed by S3 and S3 Glacier.","Use AWS Backup with a Veeam plug-in to centralise backups.","Replicate Veeam backup files to AWS using AWS DataSync."],
+    correct:1,
+    explanation:"AWS Tape Gateway presents iSCSI virtual tape library (VTL) interfaces that Veeam treats as a standard tape library — no software changes needed. Active virtual tapes are stored in S3; archived tapes move to S3 Glacier or Glacier Deep Archive (replacing physical off-site tape). Retrieval is much faster than physical tape (hours for Glacier, seconds for S3). Option A requires Veeam to write directly to S3, which requires additional Veeam licensing/configuration and doesn't replicate the tape workflow. Option C — AWS Backup does not have native Veeam integration. Option D syncs files but doesn't integrate with Veeam's tape-based backup workflow."
+  },
+  {
+    domain:"Network Security",
+    type:"hybrid",
+    scenario:"A defence contractor has highly sensitive workloads on-premises and wants to allow only specific AWS services to communicate with their network via Direct Connect. They need encryption in transit and must ensure traffic never traverses the public internet.",
+    question:"Which configuration meets ALL requirements?",
+    options:["Use a public VIF on Direct Connect and whitelist the AWS service IP ranges in on-premises firewalls.","Use a private VIF on Direct Connect to a VPC, use VPC endpoints (PrivateLink) for AWS services, and enable MACsec on the Direct Connect connection for encryption.","Use a transit VIF on Direct Connect to AWS Transit Gateway, with all traffic encrypted using IPsec.","Use a Site-to-Site VPN over Direct Connect (VPN over DX) with a private VIF for encryption."],
+    correct:1,
+    explanation:"Private VIF + VPC PrivateLink endpoints + MACsec is the most comprehensive solution. Private VIF keeps traffic on the Direct Connect private path. VPC endpoints (PrivateLink) allow AWS services to be accessed from the VPC without traversing the internet. MACsec provides Layer 2 link encryption on the Direct Connect connection itself, encrypting data in transit end-to-end on the private circuit. Option A (public VIF) routes traffic over the public AWS backbone, which violates the 'never public internet' requirement. Option C uses Transit Gateway but IPsec over DX adds complexity; MACsec is more elegant. Option D (VPN over DX) is valid for encryption but requires maintaining VPN tunnels."
+  },
+
+  // ── CLOUD-NATIVE ARCHITECTURE ──────────────────────────
+  {
+    domain:"High Availability",
+    type:"cloud",
+    scenario:"A SaaS company runs a stateless REST API on EC2 behind an ALB. During a recent us-east-1 AZ outage, 30% of users experienced errors for 8 minutes. The CTO wants to ensure no more than 0.1% error rate during any single AZ failure.",
+    question:"Which change MOST effectively prevents AZ-level failures from impacting users?",
+    options:["Increase EC2 instance size to handle more load per instance, reducing the number of instances needed.","Configure the Auto Scaling Group to maintain equal capacity across all 3 AZs and enable ALB cross-zone load balancing.","Add an Amazon CloudFront distribution in front of the ALB to cache API responses.","Use an NLB instead of an ALB for lower-latency failover during AZ outages."],
+    correct:1,
+    explanation:"Ensuring the ASG maintains equal capacity across all 3 AZs means the remaining 2 AZs each already have sufficient capacity to handle the load. ALB cross-zone load balancing distributes requests evenly so no single AZ is overwhelmed. With this design, one AZ failing only removes ~33% of capacity — the other AZs absorb traffic automatically. Option A (larger instances) reduces redundancy. Option C (CloudFront) caches static content but doesn't help stateless API availability during AZ failures. Option D (NLB) operates at Layer 4 and doesn't solve the AZ capacity distribution problem."
+  },
+  {
+    domain:"Serverless",
+    type:"cloud",
+    scenario:"An e-commerce startup processes order events using AWS Lambda. During Black Friday, the order volume spikes 100x for 2 hours. Lambda functions start failing with throttling errors, and the DynamoDB table is returning ProvisionedThroughputExceededException errors.",
+    question:"Which combination of changes resolves BOTH throttling issues with the LEAST operational overhead?",
+    options:["Increase Lambda concurrency limit and switch DynamoDB to on-demand capacity mode.","Deploy Lambda functions on EC2 with Auto Scaling to handle the spike, and add ElastiCache in front of DynamoDB.","Use SQS to buffer order events before Lambda, and switch DynamoDB to on-demand capacity mode.","Pre-scale DynamoDB provisioned capacity before Black Friday using scheduled Auto Scaling."],
+    correct:2,
+    explanation:"SQS as a buffer decouples the spike from Lambda — events queue up and Lambda processes them at a controlled rate, eliminating Lambda throttling. On-demand DynamoDB capacity automatically scales to handle any throughput level without provisioning, eliminating ProvisionedThroughputExceededException. This is fully managed with zero operational overhead. Option A increases Lambda concurrency but doesn't protect DynamoDB from sudden spikes. Option B introduces EC2 management overhead. Option D (pre-scaling) requires predicting exact capacity and doesn't handle unexpected spikes beyond the provisioned limit."
+  },
+  {
+    domain:"Container Orchestration",
+    type:"cloud",
+    scenario:"A company runs 200 microservices on self-managed Kubernetes (EKS). The DevOps team spends 40% of their time on Kubernetes cluster maintenance, node patching, and capacity planning. Management wants to reduce this overhead.",
+    question:"Which compute option for EKS eliminates the MOST operational overhead for node management?",
+    options:["Use EKS Managed Node Groups — AWS handles node lifecycle but the team still manages the group configuration.","Switch to AWS Fargate for EKS — eliminate EC2 node management entirely; AWS provisions compute per pod.","Use EC2 Auto Scaling Groups with Spot Instances to reduce cost while maintaining control.","Migrate to Amazon ECS on EC2 to simplify orchestration overhead."],
+    correct:1,
+    explanation:"AWS Fargate for EKS eliminates EC2 node management entirely. There are no nodes to patch, no capacity to plan, and no node groups to configure. AWS provisions the exact compute resources needed for each pod. The team focuses only on their Kubernetes workloads. Option A (Managed Node Groups) reduces but doesn't eliminate node management — the team still handles scaling policies and monitoring. Option C (Spot ASG) adds interruption handling complexity. Option D (ECS) is a different orchestrator and would require migrating 200 microservices, not reducing overhead."
+  },
+  {
+    domain:"Database Architecture",
+    type:"cloud",
+    scenario:"A gaming company stores player session data with unpredictable access patterns. Peak concurrent users hit 5 million and drops to 50,000 at off-peak. Average session record is 4 KB. They need reads under 1 ms.",
+    question:"Which database solution handles this workload with sub-millisecond reads and automatic scaling?",
+    options:["Amazon RDS Aurora with read replicas and ElastiCache for session caching.","Amazon DynamoDB with on-demand capacity and DAX (DynamoDB Accelerator) for caching.","Amazon ElastiCache for Redis as the primary data store with persistence enabled.","Amazon MemoryDB for Redis — fully managed, durable Redis compatible database."],
+    correct:1,
+    explanation:"DynamoDB on-demand scales from 50K to 5M concurrent users automatically with no capacity planning. DAX provides an in-memory cache delivering sub-millisecond read performance (microsecond at cache hit). 4 KB records are well within DynamoDB's 400 KB item limit. This is a serverless, fully managed stack. Option A (Aurora + ElastiCache) adds operational complexity and Aurora doesn't auto-scale instantly for 100x traffic spikes. Option C (ElastiCache as primary) lacks DynamoDB's durability guarantees for session data at scale. Option D (MemoryDB) is valid for durability but more expensive and DAX+DynamoDB is the AWS-native pattern for this use case."
+  },
+  {
+    domain:"Cost Optimisation",
+    type:"cloud",
+    scenario:"A data analytics company runs 300 EC2 r6i.4xlarge instances 24/7 for 3 years. All instances run the same predictable, steady-state workload. Current spend is $180,000/month on On-Demand pricing.",
+    question:"What purchasing strategy provides the GREATEST cost reduction?",
+    options:["Convert all instances to 1-year No-Upfront Reserved Instances.","Purchase 3-year All-Upfront Reserved Instances for the baseline workload.","Use Spot Instances for all 300 instances with Spot Fleet and Spot hibernation.","Purchase a 3-year Savings Plan (Compute) covering 90% of On-Demand spend."],
+    correct:1,
+    explanation:"3-year All-Upfront Reserved Instances provide the maximum discount available (up to 66% vs On-Demand for r6i instances). For a stable, predictable 3-year workload, paying upfront maximises savings — the total commitment is known, and there's no instance-family flexibility needed. Option A (1-year No-Upfront RIs) saves ~40% vs On-Demand — significantly less than 3-year. Option C (Spot) is inappropriate for 24/7 steady-state workloads; interruptions would disrupt analytics jobs. Option D (Savings Plans) saves up to ~66% too, but Compute Savings Plans offer slightly less discount than equivalent RIs — RIs win for identical, stable workloads."
+  },
+  {
+    domain:"Security",
+    type:"cloud",
+    scenario:"An AWS account was compromised via an exposed access key. An attacker launched 50 EC2 instances for crypto mining before being detected. The security team needs to prevent this from recurring and detect it faster.",
+    question:"Which combination of services provides BOTH prevention and rapid detection of credential abuse?",
+    options:["Enable AWS Config to detect new EC2 instances and alert via SNS.","Enable Amazon GuardDuty (detects credential abuse and crypto-mining activity via ML), enforce MFA for all IAM users, and use AWS IAM Access Analyzer to identify exposed credentials.","Deploy AWS Security Hub with CIS benchmarks and restrict EC2 launch permissions in all accounts.","Use AWS CloudTrail with CloudWatch metric filters to alert on unusual EC2 RunInstances API calls."],
+    correct:1,
+    explanation:"GuardDuty actively monitors CloudTrail, VPC Flow Logs, and DNS logs using ML to detect compromised credentials and crypto-mining activity (specific finding types: CryptoCurrency:EC2/BitcoinTool, UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration). MFA prevents credential-only compromise from being sufficient for console access. IAM Access Analyzer identifies overly permissive policies and exposed keys. Option A (Config) detects instances after launch but doesn't identify credential abuse. Option C (Security Hub/CIS) provides compliance posture but not real-time threat detection. Option D (CloudTrail + metric filters) catches RunInstances but misses the credential compromise pattern."
+  },
+  {
+    domain:"Messaging & Decoupling",
+    type:"cloud",
+    scenario:"An order processing system publishes events to multiple downstream services: inventory, billing, shipping, and analytics. Currently a monolithic app calls each service synchronously. If the billing service is down, all orders fail.",
+    question:"Which architecture makes order processing resilient to individual downstream service failures?",
+    options:["Use Amazon SQS with a single queue — all downstream services poll from the same queue.","Use Amazon SNS to publish order events, with separate SQS queues subscribed for each downstream service (fan-out pattern).","Use Amazon EventBridge to route order events directly to downstream service Lambda functions.","Use Amazon MQ (ActiveMQ) to replace the synchronous calls with message-passing."],
+    correct:1,
+    explanation:"SNS + SQS fan-out is the canonical AWS pattern for this scenario. SNS publishes the order event once; each downstream service (inventory, billing, shipping, analytics) has its own SQS queue subscribed to the SNS topic. If billing is down, its SQS queue accumulates messages — other services continue processing unaffected. Orders are never lost. Option A (single SQS queue) means each message is processed by only one consumer — all services cannot each process every order. Option C (EventBridge + Lambda) is valid but if billing Lambda fails repeatedly, messages go to DLQ — SNS/SQS provides better guaranteed delivery. Option D (Amazon MQ) adds operational overhead."
+  },
+  {
+    domain:"Analytics Pipeline",
+    type:"cloud",
+    scenario:"A streaming company generates 10 TB of user behaviour events daily. The data science team needs to run ad-hoc SQL queries on the last 90 days of data within 30 seconds. Storage costs must be minimised.",
+    question:"Which architecture provides the BEST balance of query performance and cost?",
+    options:["Load all data into Amazon RDS Aurora and run SQL queries directly.","Store data in Amazon S3 in Parquet format with Snappy compression, partitioned by date, and query with Amazon Athena.","Load data into Amazon Redshift with sort keys on date columns.","Use Amazon OpenSearch Service with date-based index rotation."],
+    correct:1,
+    explanation:"S3 + Athena is optimal for ad-hoc queries on large datasets at low cost. Parquet (columnar format) with Snappy compression reduces data scanned by 10-100x vs raw JSON/CSV. Partitioning by date limits scans to the 90-day window. Athena is serverless — you pay per query (per TB scanned), with no cluster to maintain. 90-day queries on well-partitioned Parquet typically complete in seconds. Option A (Aurora) would cost significantly more for 900 TB of cumulative data and doesn't scale for ad-hoc analytical queries. Option B is correct. Option C (Redshift) is excellent but costs more for a cluster that may sit idle. Option D (OpenSearch) is optimised for log search, not structured SQL analytics."
+  },
+  {
+    domain:"Content Delivery",
+    type:"cloud",
+    scenario:"A news website serves 50 million users globally. The origin is in us-east-1. Users in Asia-Pacific report load times of 3–5 seconds. The content is mostly static HTML, CSS, JS, and images. Some pages are personalised based on cookies.",
+    question:"Which CloudFront configuration delivers the BEST performance for all users including personalised content?",
+    options:["Create one CloudFront distribution and cache all content — personalisation will break.","Use CloudFront with Lambda@Edge for personalisation logic at edge locations, cache static assets aggressively, and use cache policies with cookie-based variations for personalised pages.","Deploy EC2 instances in ap-southeast-1 to serve Asia-Pacific users and use Route 53 latency routing.","Use CloudFront with a Regional Edge Cache and disable caching for personalised pages."],
+    correct:1,
+    explanation:"Lambda@Edge executes personalisation logic at CloudFront edge nodes closest to users, eliminating round trips to the origin. Static assets (CSS, JS, images) are cached at edge nodes with long TTLs. Personalised pages use CloudFront cache policies that key the cache on specific cookies, so personalised variants are cached at the edge too. This gives APAC users sub-500ms load times. Option A breaks personalisation. Option C requires managing EC2 fleets in another region. Option D (disable caching for personalised pages) defeats the purpose — every personalised request goes to origin in us-east-1."
+  },
+  {
+    domain:"Auto Scaling",
+    type:"cloud",
+    scenario:"A ride-sharing app experiences predictable daily traffic peaks (8–10am and 5–7pm weekdays) and unpredictable spikes during events. The backend API runs on EC2. Current fixed fleet of 100 instances runs at 10% utilisation off-peak and 95% during events.",
+    question:"Which Auto Scaling strategy reduces cost while ensuring availability during both predictable and unexpected peaks?",
+    options:["Configure only target tracking scaling on CPU utilisation at 60% — reactive only.","Use predictive scaling for the daily pattern, target tracking scaling (CPU 60%) for reactive scale-out, and set a minimum capacity for weekday peak hours.","Schedule scaling actions for every hour of the day based on historical data.","Use scheduled scaling only for the predictable peaks, accept degraded performance during unexpected spikes."],
+    correct:1,
+    explanation:"Combining predictive scaling (which analyses historical patterns to pre-scale before the 8am and 5pm peaks) with target tracking (which reactively handles unexpected spikes) covers both scenarios. A minimum capacity during peak hours ensures the fleet is never under-provisioned during known busy periods. This reduces the fleet size during off-peak hours (from 100 to potentially 15–20 instances) while maintaining headroom. Option A (target tracking only) reacts to CPU crossing 60%, but if an event causes a sudden spike, scale-out takes 3–5 minutes — too slow. Option C (hourly schedules) is inflexible. Option D accepts degraded performance which is unacceptable."
+  },
+  {
+    domain:"Monitoring & Observability",
+    type:"cloud",
+    scenario:"A fintech company has 50 microservices on EKS. Debugging latency issues is taking engineers hours because traces span multiple services. They have no distributed tracing. Logs are scattered across CloudWatch log groups.",
+    question:"Which combination of AWS services provides end-to-end distributed tracing and centralised log analysis?",
+    options:["Enable VPC Flow Logs and use Athena to query them for latency analysis.","Instrument applications with AWS X-Ray SDK, enable X-Ray for EKS, and use CloudWatch Container Insights for logs and metrics with CloudWatch Log Insights for cross-service log queries.","Deploy Prometheus and Grafana on EC2 for metrics, and ELK stack for logs.","Use CloudWatch Synthetics to create canaries that test each microservice endpoint."],
+    correct:1,
+    explanation:"AWS X-Ray provides distributed tracing — it generates a service map showing latency contributions of each microservice for every request. The X-Ray SDK propagates trace IDs across service boundaries automatically. CloudWatch Container Insights collects metrics and logs from EKS pods, and CloudWatch Log Insights lets engineers query logs across all 50 services simultaneously with SQL-like syntax. This is fully managed. Option A (VPC Flow Logs) shows network traffic but not application-level latency. Option C (Prometheus/Grafana + ELK) is valid but requires managing 3+ additional infrastructure components. Option D (Synthetics) tests availability, not debugs production issues."
+  },
+  {
+    domain:"Compliance & Governance",
+    type:"cloud",
+    scenario:"A healthcare company must comply with HIPAA. All PHI (Protected Health Information) stored in S3 must be encrypted, versioned, and access-logged. They need automated detection if any bucket is misconfigured.",
+    question:"Which set of AWS services provides AUTOMATED, CONTINUOUS compliance monitoring and remediation?",
+    options:["Manually audit S3 bucket settings quarterly using the S3 console.","Use AWS Config with S3-specific managed rules (s3-bucket-server-side-encryption-enabled, s3-bucket-versioning-enabled, s3-bucket-logging-enabled), trigger Lambda auto-remediation for non-compliant buckets, and use AWS Security Hub for centralised compliance reporting.","Enable Amazon Macie to classify PHI in S3 and alert when found.","Use AWS CloudTrail to log all S3 API calls and review manually."],
+    correct:1,
+    explanation:"AWS Config evaluates S3 buckets continuously against the three required rules. When a bucket is non-compliant (e.g., someone disables versioning), Config detects it within minutes and triggers a Lambda function to remediate (re-enable versioning, encryption, logging). Security Hub aggregates Config findings into a HIPAA compliance dashboard. This is continuous, automated, and auditable. Option A (manual quarterly audits) is not continuous. Option C (Macie) detects PHI in bucket contents — important but doesn't enforce bucket configuration compliance. Option D (CloudTrail) logs API calls — useful for forensics but doesn't provide automated remediation."
+  },
+
+  // ── MIXED ON-PREM + CLOUD ──────────────────────────────
+  {
+    domain:"Hybrid DNS",
+    type:"hybrid",
+    scenario:"A company with on-premises Active Directory DNS and AWS VPCs needs bi-directional DNS resolution. On-premises servers must resolve AWS Route 53 private hosted zone names, and AWS EC2 instances must resolve on-premises DNS names.",
+    question:"Which configuration enables bi-directional DNS resolution with the LEAST complexity?",
+    options:["Deploy DNS forwarders on EC2 in AWS that forward queries to on-premises DNS, and configure on-premises DNS to forward AWS queries to the EC2 forwarders.","Use Route 53 Resolver with inbound endpoints (for on-premises to AWS resolution) and outbound endpoints (for AWS to on-premises resolution), with forwarding rules.","Create a split-horizon DNS in Route 53 that mirrors the on-premises DNS zone.","Update DHCP option sets in all VPCs to point to the on-premises DNS server."],
+    correct:1,
+    explanation:"Route 53 Resolver is purpose-built for hybrid DNS. Inbound endpoints provide IP addresses within your VPC that on-premises DNS servers can forward AWS queries to. Outbound endpoints with forwarding rules send queries for on-premises domains to the on-premises DNS servers. This requires no custom DNS infrastructure to manage. Option A (EC2 forwarders) achieves the same result but requires maintaining EC2 instances, updates, and HA configurations. Option C (split-horizon) duplicates on-premises records manually — operationally complex. Option D (DHCP to on-premises DNS) only solves one direction and breaks Route 53 private zone resolution."
+  },
+  {
+    domain:"Hybrid Security",
+    type:"hybrid",
+    scenario:"A government agency has a zero-trust security policy. All traffic from AWS workloads to on-premises services must be inspected, even traffic flowing over Direct Connect. They need centralised firewall inspection for east-west traffic.",
+    question:"Which architecture enables centralised network inspection for hybrid traffic?",
+    options:["Deploy security groups on all EC2 instances to filter traffic at the instance level.","Use AWS Network Firewall in an inspection VPC, route all egress traffic from application VPCs through Transit Gateway to the inspection VPC before reaching on-premises via Direct Connect.","Configure NACLs on all subnets with restrictive rules to filter traffic before it exits the VPC.","Use AWS WAF on the Direct Connect connection to inspect HTTP traffic."],
+    correct:1,
+    explanation:"A centralised inspection VPC with AWS Network Firewall is the AWS-recommended architecture for zero-trust East-West inspection. Transit Gateway routes traffic from all spoke VPCs through the inspection VPC (Network Firewall) before it reaches the Direct Connect gateway and on-premises. Network Firewall provides stateful packet inspection, IPS/IDS, and custom rules. Option A (security groups) operate at instance level and lack deep packet inspection capabilities. Option C (NACLs) are stateless and coarse-grained. Option D — AWS WAF does not operate on Direct Connect connections."
+  },
+  {
+    domain:"Hybrid Database",
+    type:"hybrid",
+    scenario:"A retail company has an Oracle database on-premises with 8 TB of data. They want to migrate to AWS with a target of Amazon Aurora PostgreSQL. The migration must have less than 1 hour of downtime and they cannot afford schema redesign.",
+    question:"Which migration strategy achieves the downtime target?",
+    options:["Export Oracle data to CSV, upload to S3, import into Aurora PostgreSQL — estimated 8–16 hours of downtime.","Use AWS Schema Conversion Tool (SCT) to convert the schema and AWS DMS with full-load + CDC to migrate data with near-zero downtime, then perform a brief cutover.","Use AWS DataSync to transfer Oracle datafiles to AWS and mount on Aurora.","Create a manual pg_dump from Oracle and restore to Aurora PostgreSQL."],
+    correct:1,
+    explanation:"AWS SCT automatically converts Oracle schema to PostgreSQL-compatible DDL, flagging objects that need manual review. AWS DMS then performs a full initial load (while the source database continues serving traffic), then switches to CDC mode to replicate ongoing changes continuously. When replication lag is near-zero (seconds), a brief application cutover (typically 5–15 minutes) completes the migration — well within the 1-hour window. Option A (CSV export) causes 8–16 hours of downtime. Option C — DataSync transfers files, not database-aware migration. Option D (pg_dump from Oracle) isn't valid — pg_dump is a PostgreSQL tool, not Oracle."
+  },
+  {
+    domain:"Hybrid Monitoring",
+    type:"hybrid",
+    scenario:"An enterprise operates workloads across 3 AWS regions and 2 on-premises data centres. The NOC needs a single pane of glass for monitoring all infrastructure health, with alerting when any component crosses thresholds.",
+    question:"Which approach provides unified monitoring across on-premises and AWS with the LEAST custom development?",
+    options:["Deploy Nagios on-premises and write CloudWatch API integrations to pull AWS metrics into Nagios.","Install the CloudWatch Agent on on-premises servers (Linux/Windows) to push metrics and logs to CloudWatch, use CloudWatch dashboards for unified visibility, and create CloudWatch Alarms with SNS for alerting.","Use Amazon Managed Grafana with CloudWatch and Prometheus data sources; deploy Prometheus Node Exporter on on-premises servers.","Build a custom data aggregation pipeline using Kinesis and Lambda to collect metrics from both environments."],
+    correct:1,
+    explanation:"The CloudWatch Agent supports installation on on-premises servers (Linux and Windows) and pushes host metrics (CPU, memory, disk) and logs directly into CloudWatch. This creates a single CloudWatch namespace for all infrastructure. CloudWatch dashboards then unify AWS-native metrics and on-premises metrics in one view. CloudWatch Alarms with SNS handle alerting. No additional infrastructure required. Option A (Nagios) requires maintaining and patching Nagios servers. Option C (Managed Grafana) is excellent but requires deploying/managing Prometheus on-premises. Option D requires significant custom development."
+  },
+  {
+    domain:"Multi-Account Strategy",
+    type:"cloud",
+    scenario:"A large enterprise has 500+ AWS accounts organised in AWS Organizations. Different teams need to provision AWS resources but must follow company standards: no public S3 buckets, all EC2 must use approved AMIs, all resources must be tagged with CostCentre.",
+    question:"Which combination enforces ALL three requirements across all accounts automatically?",
+    options:["Send an email to all account owners listing the required standards and rely on manual compliance.","Use SCPs to deny public S3 ACLs, use AWS Config with remediation for S3 and AMI compliance, and use Tag Policies in AWS Organizations to enforce CostCentre tag at resource creation.","Deploy CloudFormation StackSets to create Config rules in each account for S3, AMIs, and tagging.","Use AWS Control Tower to deploy a landing zone with built-in guardrails for these three requirements."],
+    correct:3,
+    explanation:"AWS Control Tower is purpose-built for this multi-account governance scenario. It deploys a landing zone with pre-built guardrails (detective and preventive controls) that cover common requirements like public S3 prevention, and integrates with Organizations for SCPs and Tag Policies. Account Factory provisions new accounts with guardrails pre-applied. Option B is also technically valid but requires manually configuring SCPs, Config rules, and Tag Policies — significant effort across 500 accounts. Option C (StackSets) deploys Config rules but not preventive SCPs. Option A is manual — not scalable. Control Tower wraps all of Option B's requirements in a managed service."
+  },
+  {
+    domain:"Event-Driven",
+    type:"cloud",
+    scenario:"A logistics company has 200 services that need to react to shipment status changes. Currently using a direct API call model — when one service goes down, the cascade causes 15-minute outages across the platform.",
+    question:"Which event-driven architecture decouples ALL services and eliminates cascade failures?",
+    options:["Replace all API calls with synchronous gRPC calls for lower latency.","Use Amazon EventBridge as the event bus, publish shipment events from the source service, and configure rules to route events to individual target services (Lambda, SQS, Step Functions).","Create a central orchestrator Lambda function that calls each of the 200 services in sequence.","Use Amazon Kinesis Data Streams with each service reading from its own shard."],
+    correct:1,
+    explanation:"Amazon EventBridge is a serverless event bus that fully decouples producers from consumers. The shipment service publishes one event; EventBridge rules route copies to each of the 200 subscribing services independently. If one service (or its SQS queue/Lambda) fails, others are completely unaffected — there's no cascade. Event delivery is durable. Option A (gRPC) is still synchronous — a failing downstream service still blocks the caller. Option C (orchestrator Lambda) is a synchronous chain — one failure breaks the entire sequence. Option D (Kinesis) works but each service would need its own shard or consumer filtering, and it's more complex for 200 services."
+  },
+  {
+    domain:"Machine Learning",
+    type:"cloud",
+    scenario:"A retail company wants to add product recommendation features to their website. They have 3 years of purchase history in S3 (5 TB). The data science team has limited ML expertise and needs the feature live in 8 weeks.",
+    question:"Which approach delivers product recommendations in 8 weeks with MINIMAL ML expertise required?",
+    options:["Build a custom collaborative filtering model using SageMaker, train on EC2 P3 instances, and deploy to a SageMaker endpoint.","Use Amazon Personalize — a fully managed ML service for recommendations that handles data ingestion, model training, and inference without ML expertise.","Use Amazon SageMaker Autopilot to automatically build and train a recommendation model.","Download an open-source recommendation model from HuggingFace and host on Lambda."],
+    correct:1,
+    explanation:"Amazon Personalize is purpose-built for recommendation systems. It ingests historical interaction data from S3, automatically selects and trains recommendation algorithms, and exposes an inference API — all without requiring ML expertise. The team provides purchase history data; Personalize handles everything else. Deployments are typically achievable in days to weeks. Option A requires significant ML expertise for custom model development — unlikely achievable in 8 weeks without experts. Option C (Autopilot) automates ML pipeline but is general-purpose, not recommendation-optimised. Option D (HuggingFace on Lambda) requires ML expertise for model selection, fine-tuning, and deployment."
+  },
+  {
+    domain:"IAM & Permissions",
+    type:"cloud",
+    scenario:"A data engineering team needs access to specific S3 buckets and Glue jobs. However, the current setup gives all data engineers AdministratorAccess because 'it's easier'. A security review requires implementing least privilege within 30 days.",
+    question:"Which approach implements least privilege most EFFICIENTLY for a team of 20 engineers?",
+    options:["Create 20 individual IAM users with custom policies crafted for each person's specific needs.","Use AWS IAM Access Analyzer to generate least-privilege policies based on actual CloudTrail access logs, create IAM roles with those policies, and assign engineers via IAM Identity Center permission sets mapped to AD groups.","Remove AdministratorAccess and have engineers submit tickets for temporary access when needed.","Create 3 IAM groups (Junior, Senior, Lead) with manually crafted permission tiers."],
+    correct:1,
+    explanation:"IAM Access Analyzer's policy generation analyses 90 days of CloudTrail logs to generate least-privilege policies based on what each team member actually accessed — not what they might need. This is far more accurate than manual crafting. IAM Identity Center permission sets map these policies to AD groups, so new engineers automatically inherit the right permissions. Option A (20 individual users) is unmanageable and doesn't use federation. Option C (ticketing) is operationally disruptive. Option D (manual groups) requires guessing permissions and typically results in over-permissioning."
+  },
+  {
+    domain:"Reliability",
+    type:"cloud",
+    scenario:"A healthcare application processes insurance claims. Each claim must be processed exactly once — duplicate processing causes double payments. Claims arrive via API at 1,000/second. Processing takes 5–30 seconds per claim.",
+    question:"Which architecture guarantees exactly-once processing and handles the throughput?",
+    options:["Write claims directly to RDS with a unique constraint on claim ID; process synchronously in the API.","Publish claims to Amazon SQS FIFO with deduplication enabled (using claim ID as the deduplication ID), process with Lambda, and write results to DynamoDB with a conditional write on claim ID.","Use Amazon Kinesis Data Streams with enhanced fan-out; process with Lambda using idempotent handlers.","Use SNS with Lambda — SNS guarantees at-least-once delivery with idempotent consumers."],
+    correct:1,
+    explanation:"SQS FIFO with deduplication provides exactly-once delivery within a 5-minute deduplication window using the claim ID — the broker itself deduplicates. Lambda processes at scale. The conditional DynamoDB write (using a condition expression on claim ID not existing) provides a second idempotency layer at the storage level, guaranteeing double payments are impossible even if a duplicate somehow reaches processing. Option A (RDS synchronous) can't handle 1,000/sec with 5–30 second processing times — connections will exhaust. Option C (Kinesis) provides at-least-once; Lambda must implement idempotency — harder than SQS FIFO. Option D (SNS) explicitly states at-least-once — not exactly-once."
+  },
+  {
+    domain:"Caching",
+    type:"cloud",
+    scenario:"A social media platform's user profile API is the most read-heavy endpoint — 500,000 reads/second, but profiles change rarely (updates happen ~1–2 times per day). Current Aurora cluster is overwhelmed. Profile data is 2–10 KB per user.",
+    question:"Which caching strategy reduces Aurora load by the MOST while ensuring profile updates are reflected within 5 minutes?",
+    options:["Add Aurora read replicas (10x) to distribute the read load.","Use Amazon ElastiCache for Redis as a write-through cache with TTL of 5 minutes. Cache profile on first read (lazy loading), invalidate on profile update.","Use Amazon DynamoDB Accelerator (DAX) as a caching layer in front of Aurora.","Enable Aurora's built-in query cache."],
+    correct:1,
+    explanation:"ElastiCache Redis with a 5-minute TTL perfectly matches the requirements. On first access, profiles are loaded from Aurora and cached. Subsequent reads (99%+ of traffic) are served from Redis at microsecond latency, eliminating Aurora load. Profile updates invalidate or update the cache entry, ensuring freshness within 5 minutes. ElastiCache can handle 500K reads/sec with a properly sized cluster. Option A (read replicas) still hits the database for every read. Option C (DAX) is for DynamoDB, not Aurora. Option D — Aurora does not have a built-in query cache (MySQL's query cache was deprecated in 8.0)."
+  },
+  {
+    domain:"Microservices",
+    type:"cloud",
+    scenario:"A company has a service mesh of 50 microservices communicating over HTTP. They experience frequent issues with cascading failures, lack of observability into inter-service communication, and difficulty implementing consistent retry logic across all services.",
+    question:"Which AWS service provides a managed service mesh with automatic retry, circuit breaking, and observability?",
+    options:["Configure ALBs between each microservice pair for load balancing and retry logic.","Implement custom retry logic in each service codebase.","Use AWS App Mesh with Envoy proxy sidecars deployed alongside each microservice, integrating with X-Ray for distributed tracing.","Use Amazon API Gateway as a gateway for all inter-service communication."],
+    correct:2,
+    explanation:"AWS App Mesh is a managed service mesh that deploys Envoy proxy sidecars alongside each microservice. Envoy handles retries, circuit breaking, traffic shaping, and observability (metrics, traces) transparently — without code changes. X-Ray integration provides end-to-end distributed tracing. Circuit breaking prevents cascade failures by stopping traffic to failing services. Option A (ALBs between services) doesn't provide circuit breaking or distributed tracing. Option B (custom retry logic in each service) requires implementation across 50 services — inconsistent and error-prone. Option D (API Gateway) is an external API management layer, not a service-to-service mesh."
+  },
+  {
+    domain:"Networking",
+    type:"cloud",
+    scenario:"A company has 30 VPCs across 5 AWS accounts. Each VPC needs connectivity to every other VPC. Currently using VPC peering — the team is struggling to manage 435 peering connections (n*(n-1)/2 for 30 VPCs).",
+    question:"Which networking architecture reduces operational complexity while maintaining full VPC-to-VPC connectivity?",
+    options:["Continue with VPC peering but automate creation with CloudFormation.","Implement AWS Transit Gateway — attach all 30 VPCs to a single TGW using resource sharing via AWS RAM, add route tables in each VPC to route traffic via TGW.","Use AWS PrivateLink to create endpoints for each service that needs cross-VPC access.","Enable VPC sharing so all accounts use a single VPC."],
+    correct:1,
+    explanation:"AWS Transit Gateway is a hub-and-spoke network topology. Instead of 435 peering connections, each VPC needs exactly 1 TGW attachment. AWS Resource Access Manager (RAM) shares the TGW across all 5 accounts. Route tables on the TGW control which VPCs can reach which, enabling full mesh or segmented connectivity. Managing 30 TGW attachments is vastly simpler than 435 peerings. Option A (automate VPC peering) still creates 435 connections — the management problem remains. Option C (PrivateLink) exposes specific services, not full VPC connectivity. Option D (VPC sharing) is a valid alternative but requires significant restructuring and has limits."
+  },
+  {
+    domain:"Encryption",
+    type:"cloud",
+    scenario:"A financial services company must encrypt all data at rest. For their most sensitive keys (tier-1 financial data), they need hardware-level protection and the ability to audit every single cryptographic operation. They also need to generate keys within hardware that they control.",
+    question:"Which AWS service meets the hardware security and auditability requirements for tier-1 keys?",
+    options:["Use AWS KMS with customer-managed keys (CMKs) — FIPS 140-2 validated HSMs managed by AWS.","Use AWS CloudHSM — dedicated single-tenant HSM hardware in the customer's VPC, with full customer control over key material and operations, and CloudTrail logging for audit.","Use AWS Secrets Manager with automatic rotation for all tier-1 credentials.","Enable S3 server-side encryption with S3-managed keys (SSE-S3)."],
+    correct:1,
+    explanation:"AWS CloudHSM provides dedicated HSM hardware exclusively for one customer, with FIPS 140-2 Level 3 validation. Customers control the HSM and key material — AWS cannot access your keys. Every cryptographic operation is logged to CloudTrail, providing a complete audit trail. CloudHSM is the choice when regulations require hardware-level control and customer-owned key material. Option A (KMS with CMKs) uses shared HSM infrastructure managed by AWS — you don't control the hardware or have full audit of every operation. Option C (Secrets Manager) manages secrets/credentials, not cryptographic keys. Option D (SSE-S3) uses AWS-managed keys — not customer-controlled."
+  },
+  {
+    domain:"Global Architecture",
+    type:"cloud",
+    scenario:"A mobile gaming company serves 100 million users in 60 countries. The game requires real-time multiplayer (latency < 50ms). Users are in North America, Europe, and Asia-Pacific. The backend uses UDP for game state synchronisation.",
+    question:"Which AWS service reduces latency for real-time UDP game traffic globally?",
+    options:["Deploy EC2 game servers in us-east-1 only and use CloudFront to cache game assets.","Use AWS Global Accelerator with game server endpoints in each region — GA uses anycast to route players to the nearest AWS edge, then the AWS global backbone to reach the nearest game server.","Use Amazon GameLift FlexMatch in us-east-1 with latency-based player matching.","Deploy Route 53 latency routing to direct players to the nearest regional endpoint."],
+    correct:1,
+    explanation:"AWS Global Accelerator uses anycast IP addresses, so players connect to the nearest AWS edge location (130+ globally). Traffic then travels over the AWS private global backbone (not the public internet) to the nearest regional game server — dramatically lower and more consistent latency than public internet routing. Global Accelerator supports TCP and UDP. Option A (CloudFront) is for HTTP/S — it doesn't support UDP game traffic. Option C (GameLift FlexMatch) is a matchmaking service, not a latency reduction solution, and single-region servers won't achieve <50ms globally. Option D (Route 53 latency routing) only routes DNS — the actual game traffic still traverses the public internet."
+  },
+  {
+    domain:"Serverless Architecture",
+    type:"cloud",
+    scenario:"A startup builds a document processing pipeline: upload PDF → extract text → classify document → store metadata → notify user. The pipeline must handle variable load (0 to 1,000 docs/minute), have no idle costs, and each step should be independently retryable.",
+    question:"Which architecture meets all requirements?",
+    options:["EC2 fleet with Auto Scaling processes PDFs sequentially in a single service — simple but has idle costs.","S3 (PDF upload) → SQS → Lambda (text extraction) → SQS → Lambda (classification) → DynamoDB (metadata) → SNS → SES (notification), with each Lambda step having its own DLQ for independent retries.","API Gateway → Lambda orchestrator → parallel Lambda functions for each step using async invocation.","Step Functions Express Workflow with Lambda tasks for each step, S3 trigger to start the workflow."],
+    correct:3,
+    explanation:"AWS Step Functions with Lambda tasks is ideal for a multi-step pipeline requiring independent retries. Step Functions provides built-in retry and error handling per step, visual workflow monitoring, and supports parallel execution. Lambda scales to zero (no idle costs). S3 events trigger the workflow on upload. Each step can be retried independently with configurable retry policies. Option B (SQS chains) works but SQS-to-SQS chains are complex to manage; Step Functions is cleaner for a defined pipeline. Option A (EC2) has idle costs. Option C (orchestrator Lambda) requires custom retry/state management logic. Step Functions handles this natively."
+  },
+  {
+    domain:"Data Lake",
+    type:"cloud",
+    scenario:"A media company wants to build a data lake on AWS. Data scientists need to discover and query datasets from multiple sources (S3, RDS, on-premises) without moving data. The data lake must have centralised access control and a searchable data catalogue.",
+    question:"Which set of services implements a governed data lake with federated query capability?",
+    options:["Store all data in RDS Aurora and grant data scientists direct database access.","Use AWS Glue Data Catalog as the metadata catalogue, AWS Lake Formation for centralised access control and data lake governance, Amazon Athena for federated queries across S3 and JDBC sources, and Glue ETL for data ingestion.","Use Amazon Redshift as the single data warehouse — all data copied into Redshift.","Build a custom Hive Metastore on EMR for cataloguing and use Spark for queries."],
+    correct:1,
+    explanation:"This is the AWS native data lake reference architecture. Glue Data Catalog provides a unified metadata repository (tables, schemas) for all data sources. Lake Formation provides column/row-level access control and data lake administration. Athena federated queries execute SQL directly on S3 data AND against RDS/on-premises via JDBC connectors — no data movement required. Glue ETL ingests and transforms data. Option A doesn't support federated query across multiple sources. Option C (Redshift) requires copying all data — contradicts 'without moving data'. Option D (EMR + Hive) adds significant operational overhead."
+  },
+  {
+    domain:"Incident Response",
+    type:"cloud",
+    scenario:"A company's AWS account triggered a GuardDuty finding: 'UnauthorizedAccess:EC2/TorClient'. An EC2 instance appears to be communicating with Tor exit nodes. The security team needs to immediately isolate the instance without losing forensic evidence.",
+    question:"What is the CORRECT sequence of immediate response actions?",
+    options:["Terminate the compromised instance immediately to stop the threat.","Take an EBS snapshot of the instance volumes for forensic analysis, detach the instance from its current security group and attach a 'quarantine' security group (deny all inbound/outbound), disable the IAM role attached to the instance, and preserve the instance running for memory forensics if needed.","Reboot the instance — this will clear the malicious process.","Change the EC2 instance's public IP address to sever the Tor connection."],
+    correct:1,
+    explanation:"The correct incident response sequence preserves evidence while isolating the threat. EBS snapshot captures disk state for forensics. Replacing the security group with a deny-all quarantine group isolates the network without losing the running process state (memory forensics). Disabling the IAM role prevents further AWS API abuse. Keeping the instance running allows memory forensics (running processes, network connections). Option A (terminate) destroys forensic evidence — violates incident response best practices. Option C (reboot) clears volatile memory evidence and doesn't isolate the instance. Option D (change IP) doesn't prevent the Tor client from reconnecting."
+  },
+  {
+    domain:"Edge Computing",
+    type:"cloud",
+    scenario:"A retail chain has 5,000 stores globally. Each store has point-of-sale systems that must process transactions locally even when internet connectivity is lost. Sales data must sync to AWS when connectivity is restored.",
+    question:"Which AWS service provides local compute and storage at each store with automatic cloud sync?",
+    options:["Deploy EC2 instances at each store location connected via Direct Connect.","Use AWS IoT Greengrass at each store — runs Lambda functions locally for POS processing, stores data locally, and syncs to AWS IoT Core / S3 when connectivity restores.","Use AWS Local Zones at each store for local AWS infrastructure.","Configure S3 Transfer Acceleration to fast-sync store data when internet is restored."],
+    correct:1,
+    explanation:"AWS IoT Greengrass is designed exactly for this edge computing scenario. It runs on local hardware (even a Raspberry Pi), executes Lambda functions locally for POS transaction processing without internet connectivity, stores data locally using the local shadow service, and automatically syncs to AWS (S3, DynamoDB, IoT Core) when connectivity is restored. Option A (EC2 + Direct Connect) would cost millions across 5,000 stores and doesn't handle offline scenarios. Option C (Local Zones) extend AWS to metro areas — not to individual stores, and still require connectivity. Option D (Transfer Acceleration) only addresses upload speed, not offline processing."
+  },
+  {
+    domain:"Cost Optimisation",
+    type:"cloud",
+    scenario:"A startup's AWS bill is $200,000/month. 60% is EC2, 25% is data transfer, 15% is RDS. Analysis shows 40% of EC2 instances are idle during weekends. The RDS instances are over-provisioned by 3x based on actual CPU and memory metrics.",
+    question:"Which combination of optimisations provides the FASTEST cost reduction?",
+    options:["Do nothing — cloud costs always increase as the company grows.","Schedule EC2 instance stop/start using AWS Instance Scheduler for weekends (saves ~40% of EC2 cost); right-size RDS using AWS Compute Optimizer recommendations; review and optimise data transfer by keeping traffic within the same AZ or using VPC endpoints.","Purchase 3-year Reserved Instances for all EC2 and RDS at current over-provisioned sizes.","Move all EC2 instances to Spot to immediately reduce the bill by 70%."],
+    correct:1,
+    explanation:"This multi-pronged approach targets the three largest cost drivers. Instance Scheduler stops idle EC2 over weekends (saving ~16% of monthly EC2 spend: 2/7 days × 40% idle). Right-sizing RDS from 3x over-provisioned to right-sized typically reduces RDS costs 50–70%. Optimising data transfer (same-AZ traffic, VPC endpoints for AWS services) reduces the 25% data transfer component. Total potential savings: 30–50% of the total bill. Option C (RIs at current sizes) locks in over-provisioned costs for 3 years. Option D (all Spot) is inappropriate for stateful workloads like RDS and business-critical EC2."
+  },
+  {
+    domain:"API Management",
+    type:"cloud",
+    scenario:"A company exposes its order management API to 500 third-party partners. Partners have different SLAs: platinum partners get 10,000 req/min, gold 5,000, silver 1,000. The team needs API key management, usage tracking, and automatic throttling per tier.",
+    question:"Which AWS service handles multi-tier API throttling and usage plans natively?",
+    options:["Deploy an NGINX reverse proxy on EC2 with custom rate-limiting configuration.","Use Amazon API Gateway with usage plans — define throttle limits per tier, create API keys for each partner, associate keys with the appropriate usage plan, and use API Gateway's built-in metrics for usage tracking.","Use AWS WAF rate-based rules to throttle requests at the CloudFront level.","Deploy an ALB with target group weighting to distribute load by partner tier."],
+    correct:1,
+    explanation:"Amazon API Gateway usage plans are purpose-built for this exact scenario. A usage plan defines throttle rate (req/sec) and quota (req/day or req/month). API keys are created per partner and associated with the appropriate tier usage plan. API Gateway enforces throttling automatically with 429 responses. CloudWatch metrics and API Gateway dashboards track per-key usage. Option A (NGINX) requires managing EC2 infrastructure and custom rate-limiting code. Option C (WAF rate-based rules) throttles by IP, not by API key/tier. Option D (ALB weighting) distributes load, not throttles per-partner."
+  },
+  {
+    domain:"Compliance",
+    type:"cloud",
+    scenario:"An AWS customer is preparing for PCI DSS compliance. Their cardholder data environment (CDE) must be isolated from other workloads, all changes must be tracked, and they need evidence of quarterly vulnerability scanning.",
+    question:"Which combination provides PCI DSS compliance evidence and isolation?",
+    options:["Put the CDE in a separate VPC, enable CloudTrail and Config, use Amazon Inspector for vulnerability scanning, and deploy AWS Security Hub with the PCI DSS standard for automated compliance checks.","Submit a written policy document stating that the CDE is secure.","Encrypt all CDE data with SSE-S3 and call it compliant.","Use Amazon Macie to detect credit card numbers in S3 logs."],
+    correct:0,
+    explanation:"This combination addresses key PCI DSS requirements: separate VPC isolates the CDE (network segmentation). CloudTrail provides immutable change audit logs. AWS Config tracks configuration changes and drift. Amazon Inspector performs automated vulnerability scanning (satisfying quarterly scan requirements). Security Hub with PCI DSS standard maps controls to specific PCI requirements and shows evidence of compliance posture. Option B (written policy) has no technical controls. Option C (encryption only) is necessary but not sufficient — PCI DSS requires network isolation, access controls, vulnerability management, and audit logging. Option D (Macie) detects data, doesn't provide compliance controls."
+  },
+  {
+    domain:"Lambda Architecture",
+    type:"cloud",
+    scenario:"A Lambda function processes S3 events to resize images. Processing time averages 45 seconds per image. At peak load, 10,000 images arrive simultaneously. The team is seeing Lambda timeouts and excessive costs due to many concurrent functions running for 45 seconds each.",
+    question:"Which optimisation reduces BOTH timeouts and costs?",
+    options:["Increase Lambda timeout to 15 minutes to prevent timeouts.","Use AWS Batch for image processing — containers on EC2 Spot are optimal for batch, long-running jobs; reserve Lambda for short, event-driven tasks.","Use Lambda with Provisioned Concurrency to pre-warm 10,000 concurrent executions.","Increase Lambda memory to 10 GB for faster image processing."],
+    correct:1,
+    explanation:"AWS Batch is designed for exactly this type of batch processing workload. It queues the 10,000 jobs, processes them on EC2 Spot instances (up to 90% cheaper than On-Demand), manages job scheduling, retries, and monitoring. 45-second jobs are well-suited to containers on EC2 — Lambda's serverless model (pay per 100ms) becomes expensive for many long-running concurrent executions. Option A (extend timeout) prevents timeouts but doesn't address cost. Option C (Provisioned Concurrency for 10,000) is extremely expensive — pre-warming 10,000 concurrent Lambdas costs regardless of load. Option D (more memory) speeds up processing slightly but doesn't address the fundamental cost and architecture issue."
+  },
+  {
+    domain:"VPC Design",
+    type:"cloud",
+    scenario:"A company is designing a VPC for a three-tier web application (public web, private app, private database). They expect future growth to 500 EC2 instances per tier. The VPC must span 3 Availability Zones.",
+    question:"Which CIDR design supports future growth while following AWS best practices?",
+    options:["Use /28 subnets per tier per AZ — provides 14 usable IPs each, enough for near-term needs.","Use a /16 VPC CIDR (65,536 IPs), carve /20 subnets per tier per AZ (4,096 IPs each) — provides growth headroom across 9 subnets (3 tiers × 3 AZs).","Use a /24 VPC CIDR (256 IPs total) — sufficient for the planned 500 instances per tier.","Use public IPs for all instances to avoid private subnet complexity."],
+    correct:1,
+    explanation:"AWS recommends starting with a /16 VPC for maximum flexibility. /20 subnets provide 4,091 usable IPs each, more than sufficient for 500 instances per tier per AZ with room for future growth. AWS reserves 5 IPs per subnet. 9 subnets (3 tiers × 3 AZs) with /20 each uses only 9 × 4,096 = 36,864 IPs from the 65,536 available — plenty of CIDR space for expansion. Option A (/28 subnets) severely limits growth (14 IPs per subnet). Option C (/24 VPC) provides only 251 usable IPs total — far too small for 500 instances per tier. Option D (public IPs) is a security anti-pattern — application and database tiers must be private."
+  },
+  {
+    domain:"Data Replication",
+    type:"hybrid",
+    scenario:"A company replicates data from on-premises PostgreSQL (primary) to Amazon RDS PostgreSQL (reporting replica) using logical replication. Replication lag is consistently 2 hours. Analytics teams need near-real-time data (lag < 5 minutes).",
+    question:"What is the MOST effective way to reduce replication lag?",
+    options:["Increase the RDS replica instance size — more compute will process replication faster.","Analyse the replication slot on the source for unconsumed WAL; optimise large transactions by breaking them into smaller batches; upgrade the Direct Connect bandwidth from 1 Gbps to 10 Gbps if bandwidth is the bottleneck; and ensure the RDS replica's max_worker_processes supports parallel apply.","Switch from logical replication to AWS DMS continuous replication.","Take hourly RDS snapshots and restore them on the analytics instance."],
+    correct:1,
+    explanation:"Replication lag in logical replication has multiple causes. Unconsumed WAL accumulates if the replica can't apply changes fast enough — large transactions (bulk loads) are a common cause. Breaking large transactions into smaller batches reduces individual transaction apply time. If bandwidth is saturated (2 hours of lag at 1 Gbps), upgrading Direct Connect bandwidth unblocks the pipeline. Parallel apply workers (max_worker_processes) allow multiple replication workers to apply changes concurrently in PostgreSQL 10+. Option A (more compute) helps if CPU is the bottleneck but doesn't address WAL accumulation or bandwidth. Option C (DMS) would require reconfiguring the replication — significant overhead. Option D (hourly snapshots) gives 1-hour lag minimum — much worse than the 5-minute target."
+  },
+  {
+    domain:"Serverless Security",
+    type:"cloud",
+    scenario:"A Lambda function accesses DynamoDB, S3, and sends emails via SES. Currently the Lambda execution role has AmazonDynamoDBFullAccess, AmazonS3FullAccess, and AmazonSESFullAccess. A security review flags this as over-permissioned.",
+    question:"What is the MOST SECURE least-privilege IAM policy for this Lambda function?",
+    options:["Replace all managed policies with a single policy granting only the specific actions on specific resources: dynamodb:GetItem, dynamodb:PutItem on the specific table ARN; s3:GetObject, s3:PutObject on the specific bucket/prefix ARN; ses:SendEmail on specific identity ARNs.","Keep the existing policies — they are AWS managed and therefore safe.","Replace with PowerUserAccess — less than AdministratorAccess.","Use a single AmazonDynamoDBReadOnlyAccess policy for all resources."],
+    correct:0,
+    explanation:"True least privilege means granting only the specific IAM actions the function actually uses on the specific resource ARNs it accesses. dynamodb:GetItem and PutItem on one specific table ARN; s3:GetObject and PutObject on one specific bucket and prefix; ses:SendEmail on one verified identity. If the Lambda's execution role is compromised, the blast radius is limited to those exact resources and actions. Option B (keep existing) grants full access to ALL DynamoDB tables, ALL S3 buckets, and ALL SES operations in the account. Option C (PowerUserAccess) grants nearly all AWS service access — completely wrong. Option D (DynamoDB ReadOnly) doesn't grant the write or SES permissions the function needs."
+  },
+  {
+    domain:"Hybrid Workload",
+    type:"hybrid",
+    scenario:"An insurance company runs a legacy claims processing mainframe on-premises. They want to gradually modernise by moving new features to AWS Lambda, while the mainframe handles existing claims. Lambda functions need to call mainframe APIs and vice versa.",
+    question:"Which integration pattern enables bi-directional communication between Lambda and the mainframe?",
+    options:["Directly expose mainframe APIs over the public internet for Lambda to call.","Deploy API Gateway as a façade in front of Lambda; use Amazon MQ (RabbitMQ) as an event bus between AWS and the mainframe (mainframe publishes/subscribes to MQ queues over Direct Connect); Lambda consumes from MQ for mainframe events and publishes to MQ for mainframe-bound requests.","Rewrite the mainframe in Java and deploy on EC2 immediately.","Use AWS DataSync to synchronise files between the mainframe and S3 as the integration mechanism."],
+    correct:1,
+    explanation:"Amazon MQ with RabbitMQ (or ActiveMQ) is purpose-built for enterprise mainframe integration. Mainframes natively support JMS/AMQP/STOMP messaging protocols that Amazon MQ speaks. Over Direct Connect, the mainframe connects to MQ queues privately. Lambda functions consume mainframe events from MQ queues and publish responses back — fully decoupled, reliable messaging. API Gateway fronts the Lambda functions for external callers. Option A (expose mainframe publicly) is a serious security risk. Option C (rewrite mainframe) is years of effort, not 'gradual'. Option D (DataSync file sync) is for batch file transfer, not real-time API integration."
+  },
+  {
+    domain:"Logging & Audit",
+    type:"cloud",
+    scenario:"An enterprise must retain all AWS API activity logs for 7 years for regulatory compliance. Currently CloudTrail logs are stored in S3 Standard, costing $50,000/month. Logs older than 30 days are never queried but must be available within 12 hours if requested by auditors.",
+    question:"Which storage strategy maintains compliance while MINIMISING cost?",
+    options:["Delete logs older than 1 year — 7-year retention is not commonly enforced.","Configure S3 Lifecycle policies on the CloudTrail bucket: S3 Standard (0–30 days) → S3 Standard-IA (31–90 days) → S3 Glacier Instant Retrieval (91 days–1 year) → S3 Glacier Flexible Retrieval (1–7 years). Enable S3 Object Lock (WORM) with a 7-year retention period to prevent deletion.","Compress logs and store in EBS volumes — cheaper than S3 Standard.","Copy logs to on-premises tape storage after 30 days."],
+    correct:1,
+    explanation:"S3 Lifecycle tiering dramatically reduces storage costs while maintaining the 7-year retention. S3 Glacier Flexible Retrieval (Expedited) retrieves objects in 1–5 minutes; Standard retrieval is 3–5 hours — both within the 12-hour auditor requirement. S3 Object Lock with Compliance mode (WORM) prevents any user — including root — from deleting or modifying logs, satisfying immutability requirements. Cost: S3 Glacier is ~$0.004/GB vs S3 Standard $0.023/GB — ~80% cost reduction. Option A is non-compliant. Option C (EBS) is more expensive than S3 and lacks lifecycle management. Option D (tape) introduces on-premises infrastructure and tape retrieval can exceed 12 hours."
+  },
+  {
+    domain:"Well-Architected Review",
+    type:"cloud",
+    scenario:"A startup's AWS architecture was designed 3 years ago by a single engineer. The company has grown 10x. The CTO wants an objective assessment of architectural risks, anti-patterns, and improvement opportunities across all 5 pillars.",
+    question:"Which AWS tool provides a structured, pillar-based architectural review and improvement recommendations?",
+    options:["Hire an AWS Professional Services team for a custom architecture review.","Use the AWS Well-Architected Tool — run a workload review across the 5 pillars (Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimisation), review identified risks (HRIs/MRIs), and access improvement plan with specific recommendations.","Run AWS Trusted Advisor to get cost and security recommendations.","Review the AWS documentation for each service used in the architecture."],
+    correct:1,
+    explanation:"The AWS Well-Architected Tool is purpose-built for structured architecture reviews. It presents pillar-specific questions, identifies High Risk Issues (HRIs) and Medium Risk Issues (MRIs), and generates an improvement plan with specific actionable recommendations for each risk. It's free and self-service. Option A (Professional Services) is valuable but expensive — the Well-Architected Tool is the structured framework they use. Option C (Trusted Advisor) provides checks for specific issues (unused resources, security groups, service limits) but doesn't provide the holistic pillar-based architectural review the CTO needs. Option D (reading documentation) is not an assessment tool."
+  },
+  {
+    domain:"Containerised Workloads",
+    type:"cloud",
+    scenario:"A team runs 50 microservices on Amazon ECS with EC2 launch type. They struggle with bin-packing — many EC2 instances are at 80% memory but 20% CPU, or vice versa. Service deployments sometimes fail because no EC2 instance has enough resources.",
+    question:"Which change eliminates bin-packing complexity and deployment failures?",
+    options:["Manually track resource utilisation and right-size EC2 instances before each deployment.","Migrate ECS tasks to AWS Fargate launch type — Fargate provisions exact CPU and memory per task, eliminating EC2 capacity management and bin-packing entirely.","Add a cluster autoscaler to EC2 ASG and use ECS capacity providers with Spot Instances.","Use Amazon EKS instead of ECS for better scheduling."],
+    correct:1,
+    explanation:"Fargate eliminates bin-packing entirely because there are no EC2 instances to manage. Each ECS task declares its required vCPU and memory, and Fargate provisions exactly that — no more, no less. There's never a deployment failure due to insufficient EC2 capacity. Option A (manual tracking) is operationally intensive and doesn't scale. Option C (capacity providers with ASG) improves EC2 management but doesn't eliminate bin-packing — tasks still compete for EC2 resources. Option D (EKS) changes the orchestrator but doesn't eliminate the bin-packing problem unless Fargate is also used with EKS."
+  },
+  {
+    domain:"DR Testing",
+    type:"hybrid",
+    scenario:"A company documents their DR plan but has never tested it. During an actual disaster, the RDS restore from snapshot took 6 hours instead of the documented 2 hours. The failure was due to network configuration issues not accounted for in the plan.",
+    question:"Which practice BEST ensures DR plans are accurate and effective?",
+    options:["Review the DR documentation annually and update theoretical RTO/RPO figures.","Implement regular DR drills using AWS GameDays or automated runbooks (AWS Systems Manager), test the full recovery procedure in a staging environment quarterly, measure actual RTO/RPO, document gaps, and update the DR plan based on findings.","Increase the documented RTO from 2 hours to 8 hours to account for delays.","Purchase AWS Business Support so AWS assists during actual disasters."],
+    correct:1,
+    explanation:"The only way to validate a DR plan is to test it. Regular DR drills (GameDays) exercise the full recovery procedure — RDS restore, network configuration, application startup — in a staging environment. Measuring actual RTO exposes gaps (like the network configuration issue) before a real disaster. Systems Manager runbooks automate the recovery steps, reducing human error. Option A (annual document review) caught the network issue only during a real disaster. Option C (increase RTO) is capitulating to poor DR performance, not fixing it. Option D (AWS Support) assists during incidents but doesn't validate your DR plan."
+  },
+  {
+    domain:"Lake Formation",
+    type:"cloud",
+    scenario:"A data lake in S3 contains sensitive HR data (salaries, performance reviews) mixed with non-sensitive operational data. Data analysts can query non-sensitive data freely. Only HR managers can query the sensitive HR columns. Both groups use Amazon Athena.",
+    question:"Which service provides column-level access control for Athena queries WITHOUT duplicating data?",
+    options:["Create separate S3 buckets for sensitive and non-sensitive data and use bucket policies.","Use AWS Lake Formation with column-level security — grant column permissions to the HR manager group only, restrict data analyst permissions to exclude sensitive columns; both groups use the same Athena tables.","Create separate Athena views for each group that exclude sensitive columns.","Encrypt sensitive columns differently and distribute decryption keys only to HR managers."],
+    correct:1,
+    explanation:"AWS Lake Formation provides fine-grained access control (database, table, column, row, and cell level) for data lake resources. Column-level grants allow HR managers to see salary and performance columns while data analysts see only non-sensitive columns — from the same table, no data duplication. Lake Formation enforces this transparently for Athena queries. Option A (separate buckets) requires duplicating data and syncing. Option C (Athena views) can achieve column restriction but doesn't centralise governance — anyone with sufficient permissions can bypass the view and query the table directly. Lake Formation enforces at the metadata layer. Option D (encryption) is complex and operationally difficult to manage at column level."
+  },
+  {
+    domain:"Application Migration",
+    type:"hybrid",
+    scenario:"A company has 100 on-premises servers to migrate to AWS. They need to assess each server's resource utilisation, identify dependencies between servers, and group servers into migration waves. They have 6 months for the migration.",
+    question:"Which AWS service automates server discovery, dependency analysis, and migration wave planning?",
+    options:["Manually document each server's specs and dependencies in a spreadsheet.","Use AWS Application Discovery Service — deploy the Discovery Agent (agentless Discovery Connector for VMware, or agent-based) to collect CPU, memory, network, and process data; use Migration Hub to analyse dependencies and group into migration waves.","Use AWS Config to discover all EC2 instances and network connections.","Deploy AWS Systems Manager Inventory to collect server metadata."],
+    correct:1,
+    explanation:"AWS Application Discovery Service (ADS) is built for exactly this migration assessment scenario. The Discovery Agent collects server performance data (CPU, memory, disk, network), running processes, and network connections to map inter-server dependencies. Data flows into AWS Migration Hub where workloads are grouped into migration waves based on dependencies. Option A (spreadsheet) is manual, error-prone, and doesn't capture runtime dependencies. Option C (AWS Config) tracks AWS resource configurations — not on-premises servers. Option D (Systems Manager Inventory) collects software inventory but requires SSM Agent installation and an IAM role — designed for AWS instances, not on-premises servers without AWS connectivity."
+  },
+  {
+    domain:"Well-Architected Security",
+    type:"cloud",
+    scenario:"A developer accidentally committed AWS access keys to a public GitHub repository 10 minutes ago. The keys belong to an IAM user with AdministratorAccess. The keys may have already been harvested by automated scanners.",
+    question:"What is the CORRECT immediate response in the right sequence?",
+    options:["Email the developer and ask them to delete the commit.","1) Immediately deactivate (disable) the IAM access key in the IAM console; 2) Review CloudTrail for API calls made with the key in the past 10 minutes; 3) Rotate all credentials for the affected IAM user; 4) Review and remediate any resources created or modified by the key; 5) Enable GuardDuty if not already enabled for ongoing monitoring; 6) Remove the commit from GitHub history.","Change the IAM user's console password.","Wait to see if any suspicious activity occurs before taking action."],
+    correct:1,
+    explanation:"This is the AWS-recommended credential compromise response sequence. Deactivating the key immediately stops any ongoing abuse. CloudTrail review identifies what, if anything, was done with the key in the 10-minute window. Credential rotation creates new keys, making the compromised key permanently useless even if reactivated. Resource remediation reverses any damage. GuardDuty provides ongoing monitoring for continued suspicious activity. Removing from GitHub history prevents future discovery. Option A (email developer) is too slow — automated scanners harvest keys within seconds of public exposure. Option C (change password) doesn't affect API key access. Option D (wait) allows ongoing exploitation."
+  },
+  {
+    domain:"RDS Architecture",
+    type:"cloud",
+    scenario:"A PostgreSQL database on RDS handles 80% reads and 20% writes. The development team added 5 read replicas but still sees high read latency. CloudWatch shows read replicas have 90% CPU. Writes go to the primary instance which is at 20% CPU.",
+    question:"What is the MOST effective way to reduce read latency given the current bottleneck?",
+    options:["Add 5 more RDS read replicas (10 total).","Add Amazon ElastiCache for Redis in front of the application — cache frequent read queries (which are likely repeated) to reduce the load on all read replicas; investigate and optimise the most expensive queries using Performance Insights.","Upgrade all read replica instance types to a larger compute class.","Migrate reads to DynamoDB."],
+    correct:1,
+    explanation:"90% CPU on read replicas indicates the queries themselves are expensive (complex joins, large result sets, unoptimised queries) — adding more replicas just adds more instances running the same expensive queries. ElastiCache Redis caches query results: a cached query response takes microseconds and costs 0 CPU on RDS. Performance Insights identifies the top SQL queries by load — optimising the top 5 expensive queries often reduces database CPU by 40–80%. Option A (more replicas) scales horizontally but doesn't fix the underlying query performance issue. Option C (upgrade instance type) gives more CPU but adds cost without addressing query inefficiency. Option D (migrate to DynamoDB) is a significant re-architecture requiring schema redesign."
+  },
+  {
+    domain:"Hybrid Storage",
+    type:"hybrid",
+    scenario:"A life sciences company generates 200 TB of genomic data monthly from on-premises sequencers. Data must be processed in AWS (compute is expensive on-premises). They have a 1 Gbps internet link shared across the organisation and cannot disrupt other business traffic.",
+    question:"Which approach transfers 200 TB monthly to AWS without saturating the shared internet link?",
+    options:["Use AWS DataSync over the 1 Gbps internet link with QoS bandwidth throttling.","Order AWS Snowball Edge devices each month — load data, ship to AWS, ingest into S3. Use DataSync for small incremental transfers during the month.","Upgrade internet connectivity to 10 Gbps dedicated for genomics.","Use S3 Transfer Acceleration to maximise use of the existing 1 Gbps connection."],
+    correct:1,
+    explanation:"200 TB at 100% of 1 Gbps takes ~18 days — sharing the link makes it longer and disrupts other business. Snowball Edge (80 TB usable each) requires 3 devices, shipped monthly. Data is loaded on-premises without using any internet bandwidth, then shipped to AWS for direct S3 ingest. DataSync handles smaller incremental updates (new files created since the Snowball was shipped). Option A (DataSync with throttling) would take weeks even with the full 1 Gbps, and throttling makes it longer, affecting the monthly data cycle. Option C (10 Gbps upgrade) is expensive, takes months to provision, and 200 TB at 10 Gbps still takes 1.8 days at full utilisation. Option D (Transfer Acceleration) improves speed but doesn't solve the bandwidth-sharing problem."
+  },
+  {
+    domain:"WAF & DDoS",
+    type:"cloud",
+    scenario:"A financial services website suffered a Layer 7 DDoS attack — attackers sent 100,000 HTTP POST requests per second to the /login endpoint with valid-looking payloads. CloudFront absorbed the attack but the origin ALB and application servers were overwhelmed.",
+    question:"Which combination of services prevents the origin from being overwhelmed in future attacks?",
+    options:["Scale up EC2 instances behind the ALB to handle 100,000 req/sec.","Enable AWS Shield Advanced on the CloudFront distribution; configure AWS WAF with a rate-based rule limiting /login POSTs to 1,000 req/5min per IP; use WAF Bot Control to identify automated traffic; set CloudFront's origin request limit to block traffic exceeding application capacity.","Block all POST requests at the CloudFront level using a WAF geographic restriction.","Use Amazon GuardDuty to detect and automatically block attacking IPs."],
+    correct:1,
+    explanation:"Shield Advanced provides DDoS protection with AWS DRT (DDoS Response Team) support and cost protection during attacks. WAF rate-based rules on /login limit per-IP POST rates (stopping credential stuffing automatically). Bot Control identifies and blocks bot traffic before it reaches the origin. CloudFront's origin shield limits the number of requests forwarded to the origin, protecting the ALB. This layered defence stops attacks at the edge. Option A (scaling up) plays into the attacker's hands — it's more expensive and doesn't stop the attack. Option C (block all POSTs) would break legitimate logins. Option D (GuardDuty) detects threats but doesn't automatically block HTTP-level attacks."
+  },
+  {
+    domain:"Step Functions",
+    type:"cloud",
+    scenario:"A loan approval workflow has 12 steps: identity verification, credit check, fraud screening, property valuation, underwriter review (human), legal review (human), approval, document generation, e-signature, fund disbursement, notification, audit logging. Human steps may take 3–5 days.",
+    question:"Which AWS service orchestrates this long-running workflow with human approval steps?",
+    options:["Use a single Lambda function with a state machine embedded in code using if/else logic.","Use AWS Step Functions Standard Workflow — supports human approval via .waitForTaskToken pattern (pauses execution for up to 1 year awaiting an external callback), integrates Lambda for automated steps, and provides full execution history and visual debugging.","Use Amazon SQS with a different queue for each step, and a Lambda polling each queue.","Use Amazon EventBridge Scheduler to trigger each step at timed intervals."],
+    correct:1,
+    explanation:"Step Functions Standard Workflow is purpose-built for long-running workflows. The .waitForTaskToken integration pattern pauses a step's execution indefinitely (up to 1 year) until an external system calls SendTaskSuccess or SendTaskFailure with the task token — perfect for 3–5 day human review steps. Automated steps use Lambda or SDK integrations. Full execution history is preserved. Option A (Lambda with if/else) cannot pause execution for 3–5 days — Lambda has a maximum 15-minute timeout. Option C (SQS per step) is complex state management without visual debugging or built-in retry. Option D (EventBridge Scheduler) is for triggering at fixed times, not conditional, event-driven workflows."
+  },
+  {
+    domain:"Performance Efficiency",
+    type:"cloud",
+    scenario:"A machine learning inference service uses c5.18xlarge instances (72 vCPU, 144 GB RAM) for CPU-based inference. Model inference takes 800ms on CPU. The team needs to reduce inference latency to under 100ms to meet SLA requirements.",
+    question:"Which approach reduces inference latency to under 100ms?",
+    options:["Add more c5.18xlarge instances behind the ALB — horizontal scaling reduces per-instance load.","Switch to GPU-accelerated inference using g4dn instances with AWS-compiled models using Amazon SageMaker Neo or TensorRT; GPU inference for many models is 10–50x faster than CPU.","Use ElastiCache to cache inference results for repeated identical inputs.","Increase CPU instance size to c5.metal (96 vCPU) for more cores."],
+    correct:1,
+    explanation:"800ms CPU inference vs <100ms target requires a fundamentally different compute approach. GPU instances (g4dn.xlarge with NVIDIA T4) with optimised model compilation (SageMaker Neo compiles models for the target hardware; TensorRT optimises for GPU inference) typically achieve 10–50x latency improvements for neural network inference. This reliably brings 800ms to 16–80ms. Option A (more instances) doesn't reduce per-request latency — just throughput. Option C (caching) helps only for repeated identical inputs — inference is usually on unique inputs. Option D (larger CPU) — going from 72 to 96 cores gives at best 30% improvement — far short of the 8x improvement needed."
+  }
+];
+
+let userAnswers = new Array(questions.length).fill(null);
+let activeFilter = 'all';
+
+function init() {
+  renderQuestions();
+  updateStats();
+}
+
+function renderQuestions() {
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+
+  const filtered = questions.map((q, i) => ({q, i})).filter(({q}) => {
+    if (activeFilter === 'all') return true;
+    if (activeFilter === 'hybrid') return q.type === 'hybrid';
+    if (activeFilter === 'cloud') return q.type === 'cloud';
+    if (activeFilter === 'correct') return userAnswers[questions.indexOf(q)] === q.correct;
+    if (activeFilter === 'wrong') return userAnswers[questions.indexOf(q)] !== null && userAnswers[questions.indexOf(q)] !== q.correct;
+    if (activeFilter === 'unanswered') return userAnswers[questions.indexOf(q)] === null;
+    return true;
+  });
+
+  // Section labels
+  let lastType = null;
+
+  filtered.forEach(({q, i}) => {
+    if (activeFilter === 'all' && q.type !== lastType) {
+      const label = document.createElement('div');
+      label.className = 'section-label';
+      label.innerHTML = `<span class="section-line"></span><span>${q.type === 'hybrid' ? '⬡ On-Premises & Hybrid' : '☁ Cloud-Native'}</span><span class="section-line"></span>`;
+      container.appendChild(label);
+      lastType = q.type;
+    }
+
+    const ua = userAnswers[i];
+    const isAnswered = ua !== null;
+    const isCorrect = ua === q.correct;
+
+    let statusBadge = `<span class="q-status-badge status-unanswered">Unanswered</span>`;
+    if (isAnswered && isCorrect) statusBadge = `<span class="q-status-badge status-correct">✓ Correct</span>`;
+    if (isAnswered && !isCorrect) statusBadge = `<span class="q-status-badge status-wrong">✗ Wrong</span>`;
+
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = `q-${i}`;
+
+    const opts = q.options.map((opt, oi) => {
+      let cls = 'opt';
+      let icon = '';
+      if (isAnswered) {
+        cls += ' disabled';
+        if (oi === q.correct) { cls += ' reveal'; icon = '<span class="opt-icon">✓</span>'; }
+        if (oi === ua && oi !== q.correct) { cls += ' wrong'; icon = '<span class="opt-icon">✗</span>'; }
+        if (oi === ua && oi === q.correct) { cls += ' correct'; icon = '<span class="opt-icon">✓</span>'; }
+      }
+      const letter = String.fromCharCode(65 + oi);
+      return `<div class="${cls}" onclick="answer(${i}, ${oi})">
+        <span class="opt-letter">${letter}</span>
+        <span>${opt}</span>
+        ${icon}
+      </div>`;
+    }).join('');
+
+    const expClass = isAnswered ? 'explanation show' : 'explanation';
+    const expColor = isAnswered ? (isCorrect ? 'var(--correct)' : 'var(--wrong)') : 'var(--accent)';
+
+    card.innerHTML = `
+      <div class="q-header">
+        <div class="q-num">Q${i + 1}</div>
+        <div class="q-meta">
+          <div class="q-domain">${q.domain}</div>
+        </div>
+        ${statusBadge}
+      </div>
+      <div class="q-scenario">
+        <div class="scenario-label">Scenario</div>
+        ${q.scenario}
+      </div>
+      <div class="q-question">${q.question}</div>
+      <div class="q-options">${opts}</div>
+      <div class="${expClass}" id="exp-${i}">
+        <div class="exp-label" style="color:${expColor}">${isAnswered ? (isCorrect ? '✓ Correct' : '✗ Incorrect') : 'Explanation'}</div>
+        <div class="exp-body">${q.explanation}</div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);font-size:14px;">No questions match this filter.</div>';
+  }
+}
+
+function answer(qIndex, optIndex) {
+  if (userAnswers[qIndex] !== null) return;
+  userAnswers[qIndex] = optIndex;
+
+  // Re-render just this card
+  const q = questions[qIndex];
+  const isCorrect = optIndex === q.correct;
+
+  const card = document.getElementById(`q-${qIndex}`);
+  // Update badge
+  const badge = card.querySelector('.q-status-badge');
+  if (isCorrect) {
+    badge.className = 'q-status-badge status-correct';
+    badge.textContent = '✓ Correct';
+  } else {
+    badge.className = 'q-status-badge status-wrong';
+    badge.textContent = '✗ Wrong';
+  }
+
+  // Update options
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach((el, oi) => {
+    el.classList.add('disabled');
+    el.onclick = null;
+    const icon = document.createElement('span');
+    icon.className = 'opt-icon';
+    if (oi === q.correct) { el.classList.add('reveal'); icon.textContent = '✓'; el.appendChild(icon); }
+    if (oi === optIndex && oi !== q.correct) { el.classList.add('wrong'); icon.textContent = '✗'; el.appendChild(icon); }
+    if (oi === optIndex && oi === q.correct) { el.classList.add('correct'); }
+  });
+
+  // Show explanation
+  const exp = document.getElementById(`exp-${qIndex}`);
+  exp.classList.add('show');
+  const label = exp.querySelector('.exp-label');
+  label.style.color = isCorrect ? 'var(--correct)' : 'var(--wrong)';
+  label.textContent = isCorrect ? '✓ Correct' : '✗ Incorrect — Correct answer highlighted above';
+
+  updateStats();
+  checkCompletion();
+}
+
+function updateStats() {
+  const answered = userAnswers.filter(a => a !== null).length;
+  const correct = userAnswers.filter((a, i) => a === questions[i].correct).length;
+  const pct = answered === 0 ? 0 : Math.round((correct / answered) * 100);
+
+  document.getElementById('ans-count').textContent = answered;
+  document.getElementById('score-count').textContent = pct + '%';
+  document.getElementById('prog-label').textContent = `${answered} / ${questions.length} answered`;
+  document.getElementById('prog-pct').textContent = Math.round((answered / questions.length) * 100) + '%';
+  document.getElementById('prog-fill').style.width = (answered / questions.length * 100) + '%';
+}
+
+function checkCompletion() {
+  const answered = userAnswers.filter(a => a !== null).length;
+  if (answered === questions.length) {
+    showScore();
+  }
+}
+
+function showScore() {
+  const correct = userAnswers.filter((a, i) => a === questions[i].correct).length;
+  const wrong = userAnswers.filter((a, i) => a !== null && a !== questions[i].correct).length;
+  const skipped = userAnswers.filter(a => a === null).length;
+  const pct = Math.round((correct / questions.length) * 100);
+
+  let grade = '';
+  let color = '';
+  if (pct >= 80) { grade = '🏆 Excellent — Ready for the exam!'; color = 'var(--correct)'; }
+  else if (pct >= 70) { grade = '📈 Good — Review weak areas'; color = 'var(--accent)'; }
+  else if (pct >= 60) { grade = '📚 Needs improvement — Study more'; color = '#f59e0b'; }
+  else { grade = '⚠ More preparation needed'; color = 'var(--wrong)'; }
+
+  const panel = document.getElementById('score-panel');
+  panel.classList.add('show');
+  document.getElementById('final-pct').textContent = pct + '%';
+  document.getElementById('final-pct').style.color = color;
+  document.getElementById('final-grade').textContent = grade;
+  document.getElementById('fs-correct').textContent = correct;
+  document.getElementById('fs-wrong').textContent = wrong;
+  document.getElementById('fs-skip').textContent = skipped;
+  document.getElementById('fs-pct').textContent = pct + '%';
+
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetExam() {
+  userAnswers = new Array(questions.length).fill(null);
+  activeFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+  document.getElementById('score-panel').classList.remove('show');
+  updateStats();
+  renderQuestions();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-filter') === f);
+  });
+  renderQuestions();
+}
+
+// Filter bar
+const filterBar = document.createElement('div');
+filterBar.className = 'filter-bar';
+const filters = [
+  { label: 'All (50)', val: 'all' },
+  { label: 'Hybrid / On-Prem', val: 'hybrid' },
+  { label: 'Cloud-Native', val: 'cloud' },
+  { label: 'Unanswered', val: 'unanswered' },
+  { label: '✓ Correct', val: 'correct' },
+  { label: '✗ Wrong', val: 'wrong' },
+];
+filters.forEach(f => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn' + (f.val === 'all' ? ' active' : '');
+  btn.setAttribute('data-filter', f.val);
+  btn.textContent = f.label;
+  btn.onclick = () => setFilter(f.val);
+  filterBar.appendChild(btn);
+});
+document.getElementById('questions-container').before(filterBar);
+
+init();
+</script>
+</body>
+</html>

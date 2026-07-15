@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS SAP-C02 Cheatsheet</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e14;
+  --bg2: #0f1520;
+  --bg3: #141c2b;
+  --bg4: #1a2438;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --dim: #94a3b8;
+  --accent: #f59e0b;
+  --accent2: #fbbf24;
+  --green: #10b981;
+  --blue: #3b82f6;
+  --cyan: #06b6d4;
+  --red: #ef4444;
+  --purple: #8b5cf6;
+  --pink: #ec4899;
+  --orange: #f97316;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px;
+  line-height:1.7;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* GRID BG */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+  z-index:0;
+}
+
+.container{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem}
+
+/* HEADER */
+.header{text-align:center;padding:3rem 0 2.5rem;border-bottom:1px solid var(--border2);margin-bottom:2.5rem;position:relative}
+.header::before{
+  content:'// AWS CERTIFIED SOLUTIONS ARCHITECT PROFESSIONAL';
+  display:block;
+  font-size:11px;
+  color:var(--accent);
+  letter-spacing:.12em;
+  margin-bottom:1rem;
+  font-family:'JetBrains Mono',monospace;
+}
+.header h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2rem,5vw,3.5rem);
+  font-weight:800;
+  letter-spacing:-.02em;
+  background:linear-gradient(135deg,#f59e0b 0%,#fbbf24 40%,#ffffff 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  line-height:1.1;
+  margin-bottom:.75rem;
+}
+.header .sub{font-size:13px;color:var(--muted);letter-spacing:.04em}
+.exam-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(245,158,11,0.12);
+  border:1px solid rgba(245,158,11,0.3);
+  border-radius:6px;padding:6px 16px;
+  font-size:12px;color:var(--accent);
+  margin-top:1.25rem;
+}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* DOMAIN TABS */
+.tab-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:2rem}
+.tab-btn{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  padding:7px 14px;
+  border:1px solid var(--border2);
+  border-radius:6px;
+  background:var(--bg2);
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .18s;
+  letter-spacing:.03em;
+  position:relative;
+  overflow:hidden;
+}
+.tab-btn:hover{border-color:rgba(245,158,11,0.4);color:var(--dim)}
+.tab-btn.active{
+  background:rgba(245,158,11,0.1);
+  border-color:rgba(245,158,11,0.5);
+  color:var(--accent);
+}
+.tab-btn .pct{
+  display:inline-block;
+  margin-left:6px;
+  font-size:10px;
+  padding:1px 5px;
+  border-radius:3px;
+  background:rgba(255,255,255,0.08);
+  color:var(--dim);
+}
+.tab-btn.active .pct{background:rgba(245,158,11,0.2);color:var(--accent2)}
+
+/* DOMAIN PANEL */
+.domain{display:none;animation:fadeIn .2s ease}
+.domain.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.domain-header{
+  display:flex;align-items:baseline;gap:12px;
+  margin-bottom:1.75rem;
+  padding-bottom:1rem;
+  border-bottom:1px solid var(--border);
+}
+.domain-num{
+  font-family:'Syne',sans-serif;
+  font-size:13px;font-weight:600;
+  color:var(--accent);
+  letter-spacing:.06em;
+}
+.domain-title{
+  font-family:'Syne',sans-serif;
+  font-size:18px;font-weight:700;
+  color:#fff;
+  letter-spacing:-.01em;
+}
+
+/* SECTION */
+.section{margin-bottom:2rem}
+.section-label{
+  font-size:10px;
+  letter-spacing:.14em;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:1rem;
+  display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* CARDS GRID */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 16px;
+  transition:border-color .18s,transform .18s;
+}
+.card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.card-title{
+  font-family:'Syne',sans-serif;
+  font-size:13px;font-weight:600;
+  color:#fff;
+  margin-bottom:6px;
+}
+.card-body{font-size:12px;color:var(--dim);line-height:1.65}
+.services{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.svc{
+  font-size:10px;padding:2px 8px;border-radius:4px;
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:.02em;
+  white-space:nowrap;
+}
+.svc.compute{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.2)}
+.svc.network{background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.2)}
+.svc.storage{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.2)}
+.svc.database{background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.2)}
+.svc.security{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+.svc.mgmt{background:rgba(6,182,212,0.15);color:#22d3ee;border:1px solid rgba(6,182,212,0.2)}
+.svc.analytics{background:rgba(236,72,153,0.15);color:#f472b6;border:1px solid rgba(236,72,153,0.2)}
+.svc.migration{background:rgba(148,163,184,0.12);color:#94a3b8;border:1px solid rgba(148,163,184,0.15)}
+.svc.app{background:rgba(245,158,11,0.12);color:#fbbf24;border:1px solid rgba(245,158,11,0.2)}
+
+/* TIPS */
+.tips{display:flex;flex-direction:column;gap:8px}
+.tip{
+  background:var(--bg2);
+  border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;
+  padding:10px 14px;
+  font-size:12px;
+  color:var(--dim);
+  line-height:1.65;
+  transition:border-color .15s;
+}
+.tip:hover{border-color:var(--accent2)}
+.tip strong{color:#fff;font-weight:500}
+.tip .trap-label{
+  display:inline-block;
+  font-size:10px;
+  color:var(--accent);
+  letter-spacing:.06em;
+  margin-bottom:3px;
+  font-weight:500;
+}
+
+/* 7Rs */
+.rs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.r-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.r-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.r-body{font-size:12px;color:var(--dim);line-height:1.65}
+
+/* PILLAR GRID */
+.pillar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.pillar{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-top:2px solid;
+  border-radius:8px;
+  padding:14px 16px;
+}
+.pillar:nth-child(1){border-top-color:var(--cyan)}
+.pillar:nth-child(2){border-top-color:var(--red)}
+.pillar:nth-child(3){border-top-color:var(--green)}
+.pillar:nth-child(4){border-top-color:var(--purple)}
+.pillar-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
+.pillar-body{font-size:12px;color:var(--dim);line-height:1.65}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:2rem;padding:12px 16px;background:var(--bg2);border-radius:8px;border:1px solid var(--border)}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:2px}
+
+/* DECISION TREE */
+.decision{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:580px){.decision{grid-template-columns:1fr}}
+
+/* FOOTER */
+.footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--muted)}
+.footer span{color:var(--accent)}
+
+/* PRINT */
+@media print{
+  body{background:#fff;color:#000}
+  body::before{display:none}
+  .tab-nav{display:none}
+  .domain{display:block!important}
+  .card,.tip,.r-card,.pillar{break-inside:avoid}
+  .domain-header{page-break-before:always}
+}
+
+@media(max-width:600px){
+  .cards{grid-template-columns:1fr}
+  .tab-btn{font-size:10px;padding:6px 10px}
+  .header h1{font-size:2rem}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>SAP-C02 Cheatsheet</h1>
+    <div class="sub">Solutions Architect Professional — All 5 Domains</div>
+    <div class="exam-badge"><span class="badge-dot"></span> 75 questions · 180 minutes · ~72% to pass</div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span>Compute</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Network</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#f97316"></span>Storage</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#8b5cf6"></span>Database</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#ef4444"></span>Security</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#06b6d4"></span>Management</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#ec4899"></span>Analytics</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#94a3b8"></span>Migration</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>App Integration</span>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="show(0)">D1 · Continuous Improvement<span class="pct">15%</span></button>
+    <button class="tab-btn" onclick="show(1)">D2 · Migration &amp; Modernization<span class="pct">15%</span></button>
+    <button class="tab-btn" onclick="show(2)">D3 · New Solutions<span class="pct">34%</span></button>
+    <button class="tab-btn" onclick="show(3)">D4 · Org Complexity<span class="pct">26%</span></button>
+    <button class="tab-btn" onclick="show(4)">D5 · Migration Planning<span class="pct">10%</span></button>
+  </div>
+
+  <!-- ============ DOMAIN 1 ============ -->
+  <div class="domain active">
+    <div class="domain-header">
+      <span class="domain-num">DOMAIN 01</span>
+      <span class="domain-title">Continuous Improvement for Existing Solutions</span>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Key services</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Cost optimization</div>
+          <div class="card-body">Compute Optimizer (right-sizing), Cost Explorer + anomaly detection, Savings Plans vs Reserved Instances, Spot fleet strategies, S3 Intelligent-Tiering</div>
+          <div class="services">
+            <span class="svc compute">Compute Optimizer</span>
+            <span class="svc storage">S3 Intelligent-Tiering</span>
+            <span class="svc mgmt">Cost Explorer</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Performance tuning</div>
+          <div class="card-body">CloudFront + Lambda@Edge for edge compute, ElastiCache Redis vs Memcached, RDS Read Replicas, DAX for DynamoDB, Global Accelerator for TCP/UDP</div>
+          <div class="services">
+            <span class="svc compute">Lambda@Edge</span>
+            <span class="svc database">ElastiCache</span>
+            <span class="svc database">DAX</span>
+            <span class="svc network">Global Accelerator</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Observability</div>
+          <div class="card-body">CloudWatch Logs Insights, X-Ray for distributed tracing, Contributor Insights, CloudWatch Synthetics (canaries), AWS Config rules + auto-remediation</div>
+          <div class="services">
+            <span class="svc mgmt">CloudWatch</span>
+            <span class="svc mgmt">X-Ray</span>
+            <span class="svc mgmt">Config</span>
+            <span class="svc mgmt">Synthetics</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Resilience &amp; HA</div>
+          <div class="card-body">Multi-AZ vs Multi-Region designs, ASG health check types, ALB + NLB target group routing, Aurora Global Database, Route 53 failover routing policies</div>
+          <div class="services">
+            <span class="svc network">Route 53</span>
+            <span class="svc database">Aurora Global</span>
+            <span class="svc compute">ASG</span>
+            <span class="svc compute">ALB / NLB</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Exam tips &amp; traps</div>
+      <div class="tips">
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>Spot vs Savings Plans:</strong> Spot for fault-tolerant / batch / flexible-start jobs. Savings Plans for steady-state, always-on workloads. Questions disguise cost-cutting as "design" problems — look for words like "fluctuating" or "interruption-tolerant".</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>CloudWatch vs CloudTrail:</strong> CloudWatch = metrics, logs, alarms (operational visibility). CloudTrail = API call history (auditing / compliance). If question is about "who did what" → CloudTrail. If "is my service healthy" → CloudWatch.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>DAX vs ElastiCache:</strong> DAX is DynamoDB-specific, write-through, microsecond latency. ElastiCache is general-purpose (Redis/Memcached). If question mentions DynamoDB read latency → DAX first.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>Reserved Instance flexibility:</strong> Convertible RIs can change instance family/OS/tenancy. Standard RIs cannot. Compute Savings Plans are even more flexible than Convertible RIs — no instance family lock-in.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>Global Accelerator vs CloudFront:</strong> GA = static IPs, TCP/UDP, non-HTTP, gaming, VoIP. CloudFront = HTTP/HTTPS caching, Lambda@Edge. Both improve global performance but for different use cases.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DOMAIN 2 ============ -->
+  <div class="domain">
+    <div class="domain-header">
+      <span class="domain-num">DOMAIN 02</span>
+      <span class="domain-title">Accelerate Workload Migration and Modernization</span>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Key services</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Modernization patterns</div>
+          <div class="card-body">Monolith → microservices using SQS for decoupling, EventBridge for event-driven, Step Functions for orchestration, SNS for fan-out</div>
+          <div class="services">
+            <span class="svc compute">ECS Fargate</span>
+            <span class="svc app">SQS</span>
+            <span class="svc app">EventBridge</span>
+            <span class="svc compute">Step Functions</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Database modernization</div>
+          <div class="card-body">DMS for data migration, Schema Conversion Tool (SCT) for heterogeneous migrations, Aurora Serverless v2 for variable workloads</div>
+          <div class="services">
+            <span class="svc migration">DMS</span>
+            <span class="svc migration">SCT</span>
+            <span class="svc database">Aurora Serverless v2</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Container strategy</div>
+          <div class="card-body">EKS for Kubernetes workloads (portability), ECS for simpler AWS-native orchestration, ECR for image registry, App Mesh for service mesh</div>
+          <div class="services">
+            <span class="svc compute">EKS</span>
+            <span class="svc compute">ECS</span>
+            <span class="svc compute">ECR</span>
+            <span class="svc compute">App Mesh</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Serverless modernization</div>
+          <div class="card-body">Lambda + API Gateway replacing EC2 apps, SAM / CDK for IaC, Cognito for auth, AppSync for GraphQL, Amplify for full-stack</div>
+          <div class="services">
+            <span class="svc compute">Lambda</span>
+            <span class="svc security">Cognito</span>
+            <span class="svc app">AppSync</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">The 7 Rs of migration</div>
+      <div class="rs-grid">
+        <div class="r-card"><div class="r-name">Retire</div><div class="r-body">Decommission unused / low-value apps. Often overlooked — up to 10–20% of portfolio.</div></div>
+        <div class="r-card"><div class="r-name">Retain</div><div class="r-body">Keep on-prem (compliance, latency, recent investment). Not a failure — valid strategy.</div></div>
+        <div class="r-card"><div class="r-name">Rehost</div><div class="r-body">Lift &amp; shift to EC2. Fast, no code change. Use MGN (Application Migration Service).</div></div>
+        <div class="r-card"><div class="r-name">Replatform</div><div class="r-body">Lift, tinker &amp; shift. e.g. move to RDS instead of self-managed DB. Minimal changes.</div></div>
+        <div class="r-card"><div class="r-name">Repurchase</div><div class="r-body">Move to SaaS (Salesforce, Workday). For commodity apps where custom code has no value.</div></div>
+        <div class="r-card"><div class="r-name">Refactor</div><div class="r-body">Re-architect for cloud-native. Highest effort + benefit. Triggers: scale, agility, features.</div></div>
+        <div class="r-card"><div class="r-name">Relocate</div><div class="r-body">Move to VMware Cloud on AWS or similar. Minimal changes to existing VM-based apps.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Exam tips &amp; traps</div>
+      <div class="tips">
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>DMS + SCT:</strong> Heterogeneous migrations (Oracle → Aurora PostgreSQL) need SCT first for schema conversion, then DMS for data. Homogeneous (MySQL → Aurora MySQL) → DMS only.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>ECS vs EKS:</strong> ECS = simpler, AWS-native, no Kubernetes knowledge needed. EKS = Kubernetes compatibility, multi-cloud portability. Choose EKS when question mentions "existing Kubernetes" or "portable".</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>SQS vs SNS vs EventBridge:</strong> SQS = pull/queue (decoupling, at-least-once). SNS = push/fan-out to multiple endpoints. EventBridge = event routing with rules, schema registry, cross-account/SaaS events.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>Step Functions vs SQS:</strong> Step Functions = workflow orchestration with state, retries, error handling. SQS = simple async decoupling. If the question shows a multi-step process with branching → Step Functions.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DOMAIN 3 ============ -->
+  <div class="domain">
+    <div class="domain-header">
+      <span class="domain-num">DOMAIN 03</span>
+      <span class="domain-title">Design for New Solutions</span>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Compute &amp; networking</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">EC2 placement &amp; scaling</div>
+          <div class="card-body">Placement groups: Cluster (low latency HPC), Spread (max HA, 7/AZ), Partition (Hadoop/Kafka). Warm pools for fast ASG scale-out. Lifecycle hooks for custom actions.</div>
+          <div class="services"><span class="svc compute">EC2</span><span class="svc compute">ASG + Warm Pools</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">VPC connectivity</div>
+          <div class="card-body">VPC Peering (1:1, no transitive), Transit Gateway (hub-and-spoke, thousands of VPCs), PrivateLink (service exposure without VPC peering), VPC endpoints (Gateway vs Interface)</div>
+          <div class="services"><span class="svc network">Transit GW</span><span class="svc network">PrivateLink</span><span class="svc network">VPC Endpoints</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Hybrid connectivity</div>
+          <div class="card-body">Direct Connect (dedicated, consistent BW), Site-to-Site VPN (encrypted, internet), DX + VPN = encrypted DX, DX Gateway for multi-VPC/region</div>
+          <div class="services"><span class="svc network">Direct Connect</span><span class="svc network">VPN</span><span class="svc network">DX Gateway</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Load balancing &amp; DNS</div>
+          <div class="card-body">ALB (HTTP/HTTPS, path/host routing, Lambda targets), NLB (TCP/UDP, static IPs, ultra-low latency), GLB (third-party appliances). Route 53 routing policies.</div>
+          <div class="services"><span class="svc compute">ALB</span><span class="svc compute">NLB</span><span class="svc compute">GLB</span><span class="svc network">Route 53</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Storage design</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">S3 tiers &amp; features</div>
+          <div class="card-body">Standard → Standard-IA → One Zone-IA → Intelligent-Tiering → Glacier Instant → Glacier Flexible → Glacier Deep Archive. Object Lock (WORM), Replication (CRR/SRR), MFA Delete.</div>
+          <div class="services"><span class="svc storage">S3</span><span class="svc storage">S3 Glacier</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Block &amp; file storage</div>
+          <div class="card-body">EBS gp3 vs io2 Block Express (high IOPS), EFS (POSIX, multi-AZ NFS), FSx for Windows (SMB, AD), FSx for Lustre (HPC, S3 integration)</div>
+          <div class="services"><span class="svc storage">EBS</span><span class="svc storage">EFS</span><span class="svc storage">FSx for Lustre</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Databases</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">RDS &amp; Aurora</div>
+          <div class="card-body">Multi-AZ = HA/failover (sync). Read Replicas = read scaling (async). Aurora: 6-way replication, backtrack, parallel query, Global Database (RPO &lt;1s)</div>
+          <div class="services"><span class="svc database">RDS Multi-AZ</span><span class="svc database">Aurora Global</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">DynamoDB</div>
+          <div class="card-body">On-demand vs Provisioned, DAX for read cache, Streams for event-driven, Global Tables for multi-region active-active, TTL for auto-expiry</div>
+          <div class="services"><span class="svc database">DynamoDB</span><span class="svc database">DAX</span><span class="svc database">Global Tables</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Specialty databases</div>
+          <div class="card-body">Neptune (graph), QLDB (immutable ledger, verifiable), Timestream (time-series IoT), DocumentDB (MongoDB-compatible), Keyspaces (Cassandra)</div>
+          <div class="services"><span class="svc database">Neptune</span><span class="svc database">QLDB</span><span class="svc database">Timestream</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Analytics</div>
+          <div class="card-body">Redshift (OLAP, data warehouse), Athena (serverless S3 queries), Glue (ETL + catalog), Kinesis Data Streams vs Firehose vs Analytics</div>
+          <div class="services"><span class="svc analytics">Redshift</span><span class="svc analytics">Athena</span><span class="svc analytics">Kinesis</span><span class="svc analytics">Glue</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Security &amp; identity</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Encryption</div>
+          <div class="card-body">KMS CMK: AWS-managed vs customer-managed vs custom key store. Envelope encryption. CloudHSM for FIPS 140-2 Level 3. ACM for TLS certs (free, auto-renew).</div>
+          <div class="services"><span class="svc security">KMS</span><span class="svc security">CloudHSM</span><span class="svc security">ACM</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Access control</div>
+          <div class="card-body">IAM roles vs resource-based policies, Permission boundaries (max permissions), ABAC with tags, Secrets Manager for rotation, Parameter Store for config</div>
+          <div class="services"><span class="svc security">IAM</span><span class="svc security">Secrets Manager</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Threat detection</div>
+          <div class="card-body">GuardDuty (ML threat intel, VPC/DNS/CloudTrail logs), Macie (S3 PII discovery), Inspector (EC2/ECR vulnerabilities), Security Hub (aggregation + findings)</div>
+          <div class="services"><span class="svc security">GuardDuty</span><span class="svc security">Macie</span><span class="svc security">Inspector</span><span class="svc security">Security Hub</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Network security</div>
+          <div class="card-body">WAF (L7 web ACLs), Shield Standard (free DDoS) vs Shield Advanced (24/7 DRT, cost protection), Network Firewall (VPC-level stateful), Firewall Manager</div>
+          <div class="services"><span class="svc security">WAF</span><span class="svc security">Shield Advanced</span><span class="svc network">Network Firewall</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Well-Architected pillars</div>
+      <div class="pillar-grid">
+        <div class="pillar">
+          <div class="pillar-title">Operational Excellence</div>
+          <div class="pillar-body">IaC with CDK/CloudFormation, CI/CD with CodePipeline, runbooks as code, CloudWatch alarms → EventBridge → Lambda for automated remediation</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-title">Security</div>
+          <div class="pillar-body">Least privilege, encrypt at rest + in transit, enable GuardDuty + Security Hub, use SCPs, rotate creds with Secrets Manager, VPC endpoints over internet</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-title">Reliability</div>
+          <div class="pillar-body">Multi-AZ + multi-region, chaos engineering, exponential backoff + jitter, circuit breakers, automated backup testing, RTO vs RPO design</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-title">Performance / Cost / Sustainability</div>
+          <div class="pillar-body">Right-size with Compute Optimizer, Graviton for price/perf, managed services over self-managed, Savings Plans, measure carbon footprint</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Exam tips &amp; traps</div>
+      <div class="tips">
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>VPC Peering vs Transit Gateway:</strong> Peering = 1:1, no transitive routing, scales poorly. TGW = hub-and-spoke, transitive routing, scales to thousands of VPCs. Choose TGW when ≥3 VPCs need to communicate or you need centralized routing.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>CloudHSM vs KMS:</strong> KMS = AWS-managed HSM (shared), FIPS 140-2 Level 2. CloudHSM = dedicated hardware, you control keys, FIPS 140-2 Level 3. Required when question mentions "you must manage your own keys" or "FIPS Level 3".</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>RDS Multi-AZ vs Read Replica:</strong> Multi-AZ = synchronous standby for failover (HA). Read Replica = asynchronous copy for read scaling. Can promote Read Replica to standalone DB. Multi-AZ does NOT improve read performance.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>ALB vs NLB vs GLB:</strong> ALB = HTTP/HTTPS, path/host-based routing, WebSockets. NLB = TCP/UDP, static IPs, preserve source IP, lowest latency. GLB = bumps traffic through third-party network appliances (firewalls, IDS).</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>Kinesis Data Streams vs Firehose:</strong> KDS = real-time, you manage consumers, 1–365 day retention. Firehose = near-real-time (60s buffer), serverless delivery to S3/Redshift/OpenSearch. Firehose is simpler but adds latency.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>S3 storage classes:</strong> Standard → Standard-IA → One Zone-IA → Intelligent-Tiering → Glacier Instant → Glacier Flexible Retrieval → Glacier Deep Archive. One Zone-IA loses data if AZ fails — only for reproducible data.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DOMAIN 4 ============ -->
+  <div class="domain">
+    <div class="domain-header">
+      <span class="domain-num">DOMAIN 04</span>
+      <span class="domain-title">Design Solutions for Organizational Complexity</span>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Multi-account &amp; governance</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">AWS Organizations</div>
+          <div class="card-body">OUs for grouping accounts, SCPs to restrict actions (DENY only, not grant), Management account vs member accounts, Consolidated billing, Delegated admin for services</div>
+          <div class="services"><span class="svc mgmt">Organizations</span><span class="svc security">SCPs</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Control Tower</div>
+          <div class="card-body">Automated multi-account setup, Account Factory (vend new accounts), Guardrails = preventive SCPs + detective Config rules, Account Factory for Terraform</div>
+          <div class="services"><span class="svc mgmt">Control Tower</span><span class="svc mgmt">Account Factory</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Cross-account access</div>
+          <div class="card-body">sts:AssumeRole for role chaining, resource-based policies (S3, KMS, Lambda), RAM for sharing subnets / TGW / Route 53 Resolver rules / License Manager</div>
+          <div class="services"><span class="svc security">IAM Roles</span><span class="svc mgmt">RAM</span><span class="svc mgmt">STS</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Centralized logging</div>
+          <div class="card-body">Organization CloudTrail to central S3 (immutable), Security Hub cross-account aggregation, centralized VPC Flow Logs, Firewall Manager for WAF/SGs at scale</div>
+          <div class="services"><span class="svc mgmt">CloudTrail</span><span class="svc security">Security Hub</span><span class="svc security">Firewall Manager</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Identity federation</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">IAM Identity Center (SSO)</div>
+          <div class="card-body">Preferred for workforce SSO across multiple AWS accounts. Integrates with external IdPs (Okta, Azure AD) via SAML. Permission sets map to IAM roles per account.</div>
+          <div class="services"><span class="svc security">IAM Identity Center</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Active Directory</div>
+          <div class="card-body">AD Connector = proxy to on-prem AD (no data stored in AWS). AWS Managed AD = full AD in AWS cloud. Simple AD for small orgs. Trust relationship between on-prem and Managed AD.</div>
+          <div class="services"><span class="svc security">AD Connector</span><span class="svc security">Managed AD</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">External federation</div>
+          <div class="card-body">SAML 2.0 for enterprise IdPs, OIDC for web identity (Google, Facebook), Cognito Identity Pools for app user federation to AWS resources</div>
+          <div class="services"><span class="svc security">SAML/OIDC</span><span class="svc security">Cognito</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Service Catalog &amp; StackSets</div>
+          <div class="card-body">Service Catalog for approved product portfolios (self-service with guardrails). CloudFormation StackSets for multi-account/region deployments. SERVICE_MANAGED mode + Organizations auto-deploys to new accounts.</div>
+          <div class="services"><span class="svc mgmt">Service Catalog</span><span class="svc mgmt">StackSets</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Networking at org scale</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Shared networking</div>
+          <div class="card-body">Share VPC subnets via RAM so member accounts deploy into centrally managed VPC. Central transit gateway shared via RAM. Hub-and-spoke with TGW + inspection VPC.</div>
+          <div class="services"><span class="svc mgmt">RAM</span><span class="svc network">Transit GW</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">DNS at scale</div>
+          <div class="card-body">Route 53 Resolver inbound/outbound endpoints for hybrid DNS. Private hosted zones shared via RAM. Route 53 Profiles for consistent DNS config. Split-horizon DNS.</div>
+          <div class="services"><span class="svc network">Route 53 Resolver</span><span class="svc mgmt">RAM</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">On-prem to cloud</div>
+          <div class="card-body">Direct Connect + DX Gateway for multi-VPC/region. Outposts for on-prem AWS infrastructure. Local Zones for sub-10ms latency apps. Wavelength for mobile edge (5G).</div>
+          <div class="services"><span class="svc network">DX Gateway</span><span class="svc compute">Outposts</span><span class="svc compute">Local Zones</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Exam tips &amp; traps</div>
+      <div class="tips">
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>SCPs do not grant permissions.</strong> SCPs only restrict what member accounts CAN do. An SCP Allow just removes an SCP deny. Without IAM policies, even SCP Allow = no access. Management account is NEVER affected by SCPs.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>RAM vs VPC Peering:</strong> RAM shares actual resources (subnets, TGW, Route 53 Resolver rules). VPC Peering shares network connectivity. Share subnets via RAM so teams deploy into a shared networking account — this is the recommended multi-account network pattern.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>AD Connector vs Managed AD:</strong> AD Connector = proxy, no user data stored in AWS, on-prem AD must be reachable. Managed AD = full AD in AWS, works if on-prem goes down. If question says "no replication to cloud" or "on-prem AD stays authoritative" → AD Connector.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>CloudFormation StackSets + Organizations:</strong> SELF_MANAGED mode needs you to set up trust manually. SERVICE_MANAGED mode uses trusted access with Organizations — automatically deploys to new accounts added to target OUs.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>IAM Identity Center vs IAM SAML federation:</strong> Identity Center = modern, preferred for workforce SSO, stores permission sets, works across all accounts. SAML federation = legacy, per-account, you manage everything. Always prefer Identity Center in new designs.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DOMAIN 5 ============ -->
+  <div class="domain">
+    <div class="domain-header">
+      <span class="domain-num">DOMAIN 05</span>
+      <span class="domain-title">Migration Planning</span>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Discovery &amp; assessment</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Application Discovery Service</div>
+          <div class="card-body">Agent-based (detailed: process, network, performance) or agentless (via vCenter, basic). Discovers servers, dependencies, utilization. Feeds data into Migration Hub.</div>
+          <div class="services"><span class="svc migration">ADS Agent</span><span class="svc migration">ADS Agentless</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Migration Hub</div>
+          <div class="card-body">Single pane for tracking all migration activity across MGN, DMS, and third-party tools. Migration Hub Orchestrator for automated migration workflows.</div>
+          <div class="services"><span class="svc migration">Migration Hub</span><span class="svc migration">Orchestrator</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Migration Evaluator</div>
+          <div class="card-body">Business case tool — projects cost of running on-prem workloads in AWS. Uses collector agents or import. Produces TCO analysis report. Used in Assess phase.</div>
+          <div class="services"><span class="svc migration">Migration Evaluator</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">AWS MGN (App Migration Svc)</div>
+          <div class="card-body">Preferred lift-and-shift tool. Replaces SMS. Continuous block-level replication to AWS. Near-zero cutover window. Test migrations without impacting source.</div>
+          <div class="services"><span class="svc migration">MGN</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Data transfer decision tree</div>
+      <div class="decision">
+        <div class="card">
+          <div class="card-title">Online transfer</div>
+          <div class="card-body">
+            <strong>S3 Transfer Acceleration</strong> — long-distance S3 uploads via CloudFront edge<br><br>
+            <strong>DataSync</strong> — scheduled/ongoing sync from NFS/SMB/HDFS/S3 on-prem to AWS (EFS, S3, FSx)<br><br>
+            <strong>Storage Gateway</strong> — hybrid access (file/volume/tape) with local caching<br><br>
+            <strong>Direct Connect</strong> — dedicated high-bandwidth for continuous large transfers
+          </div>
+          <div class="services"><span class="svc migration">DataSync</span><span class="svc storage">S3-TA</span><span class="svc storage">Storage GW</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Offline transfer (physical)</div>
+          <div class="card-body">
+            <strong>Snowball Edge Storage</strong> — 80TB usable, no compute<br><br>
+            <strong>Snowball Edge Compute</strong> — 80TB + EC2 instances for on-device processing<br><br>
+            <strong>Snowmobile</strong> — 100PB per truck, for exabyte migrations<br><br>
+            <strong>Rule:</strong> if transfer over your link takes &gt;1 week → use Snowball. Calculate: data(TB) ÷ bandwidth(Mbps) × 8000 = seconds
+          </div>
+          <div class="services"><span class="svc migration">Snowball Edge</span><span class="svc migration">Snowmobile</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Migration phases (CAF)</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">1 · Assess</div>
+          <div class="card-body">Discover portfolio with ADS. Build business case with Migration Evaluator. Identify 7R disposition. Define migration wave plan.</div>
+          <div class="services"><span class="svc migration">ADS</span><span class="svc migration">Migration Evaluator</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">2 · Mobilize</div>
+          <div class="card-body">Set up landing zone (Control Tower). Build migration factory (automation). Establish ops model. Run pilot migrations.</div>
+          <div class="services"><span class="svc mgmt">Control Tower</span><span class="svc migration">Migration Hub</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">3 · Migrate &amp; Modernize</div>
+          <div class="card-body">Execute wave-based migrations with MGN + DMS. Post-migration optimize. Modernize workloads iteratively. Decommission on-prem.</div>
+          <div class="services"><span class="svc migration">MGN</span><span class="svc migration">DMS</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Exam tips &amp; traps</div>
+      <div class="tips">
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>MGN vs DMS:</strong> MGN = server/VM migration (any OS, lift &amp; shift). DMS = database migration (with optional schema conversion). They're complementary — MGN for the server, DMS for the database inside it. SMS is deprecated; always choose MGN.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>DataSync vs Storage Gateway:</strong> DataSync = one-time or scheduled bulk transfer (set it, run it, done). Storage Gateway = permanent hybrid access, local cache, ongoing integration. If question says "ongoing" or "hybrid access" → Storage Gateway. "Migrate data" → DataSync.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>Snowball sizing math:</strong> Snowball Edge = 80TB usable per device. If question says 200TB → 3 Snowballs. Snowmobile for &gt;10PB. Always calculate: at 100 Mbps, 80TB takes ~74 days — always use offline for large datasets over slow links.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>ADS agent vs agentless:</strong> Agent = installed on each server, detailed data (processes, network connections, CPU/RAM over time). Agentless = VMware vCenter only, less detail, no process-level data. Agent is preferred for accurate dependency mapping.</div>
+        <div class="tip"><div class="trap-label">⚡ TRAP</div><strong>Migration Evaluator vs Pricing Calculator:</strong> Migration Evaluator = business case, TCO analysis, uses real utilization data. Pricing Calculator = estimate AWS costs for a given architecture. Use Evaluator for "should we migrate" decisions, Pricing Calculator for "how much will this design cost".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>AWS SAP-C02 · <span>75 questions</span> · 180 min · ~72% passing score · Valid 3 years</p>
+    <p style="margin-top:6px;font-size:11px">Study tip: Domain 3 is 34% of the exam — spend the most time there. Good luck! 🚀</p>
+  </div>
+
+</div>
+
+<script>
+function show(i){
+  document.querySelectorAll('.tab-btn').forEach((t,idx)=>t.classList.toggle('active',idx===i));
+  document.querySelectorAll('.domain').forEach((d,idx)=>d.classList.toggle('active',idx===i));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+// keyboard nav
+document.addEventListener('keydown',e=>{
+  const active=[...document.querySelectorAll('.tab-btn')].findIndex(t=>t.classList.contains('active'));
+  if(e.key==='ArrowRight'&&active<4)show(active+1);
+  if(e.key==='ArrowLeft'&&active>0)show(active-1);
+});
+</script>
+</body>
+</html>

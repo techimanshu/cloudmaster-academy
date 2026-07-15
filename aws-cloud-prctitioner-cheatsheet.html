@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Cloud Practitioner — Cheat Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --aws-orange: #FF9900;
+    --aws-dark: #0D1117;
+    --aws-navy: #131F2E;
+    --aws-card: #1A2332;
+    --aws-border: #243040;
+    --aws-muted: #8B9EB0;
+    --aws-text: #E2EBF4;
+    --aws-accent: #00D4FF;
+    --aws-green: #39D98A;
+    --aws-red: #FF5A5A;
+    --aws-yellow: #FFD666;
+    --aws-purple: #B07FFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--aws-dark);
+    color: var(--aws-text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--aws-navy);
+    border-bottom: 2px solid var(--aws-orange);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+
+  .header-left { display: flex; align-items: center; gap: 16px; }
+
+  .aws-logo {
+    background: var(--aws-orange);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 6px 10px;
+    letter-spacing: 1px;
+  }
+
+  header h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--aws-text);
+    letter-spacing: -0.5px;
+  }
+
+  header h1 span { color: var(--aws-orange); }
+
+  .badge {
+    background: transparent;
+    border: 1px solid var(--aws-orange);
+    color: var(--aws-orange);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    letter-spacing: 1.5px;
+  }
+
+  /* NAV TABS */
+  nav {
+    background: var(--aws-navy);
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--aws-border);
+  }
+
+  nav::-webkit-scrollbar { height: 4px; }
+  nav::-webkit-scrollbar-track { background: var(--aws-dark); }
+  nav::-webkit-scrollbar-thumb { background: var(--aws-orange); }
+
+  .tab {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 14px 20px;
+    cursor: pointer;
+    color: var(--aws-muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+
+  .tab:hover { color: var(--aws-text); }
+  .tab.active { color: var(--aws-orange); border-bottom-color: var(--aws-orange); }
+
+  /* MAIN LAYOUT */
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 40px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-3 { grid-column: span 3; }
+
+  /* CARDS */
+  .card {
+    background: var(--aws-card);
+    border: 1px solid var(--aws-border);
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .card.orange::before { background: var(--aws-orange); }
+  .card.blue::before { background: var(--aws-accent); }
+  .card.green::before { background: var(--aws-green); }
+  .card.red::before { background: var(--aws-red); }
+  .card.purple::before { background: var(--aws-purple); }
+  .card.yellow::before { background: var(--aws-yellow); }
+
+  .card h2 {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card h2 .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .orange .dot { background: var(--aws-orange); }
+  .blue .dot { background: var(--aws-accent); }
+  .green .dot { background: var(--aws-green); }
+  .red .dot { background: var(--aws-red); }
+  .purple .dot { background: var(--aws-purple); }
+  .yellow .dot { background: var(--aws-yellow); }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--aws-muted);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--aws-border);
+  }
+  td { padding: 9px 10px; border-bottom: 1px solid rgba(36,48,64,0.6); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,153,0,0.04); }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-orange { background: rgba(255,153,0,0.15); color: var(--aws-orange); }
+  .tag-blue { background: rgba(0,212,255,0.12); color: var(--aws-accent); }
+  .tag-green { background: rgba(57,217,138,0.12); color: var(--aws-green); }
+  .tag-red { background: rgba(255,90,90,0.12); color: var(--aws-red); }
+  .tag-purple { background: rgba(176,127,255,0.12); color: var(--aws-purple); }
+  .tag-yellow { background: rgba(255,214,102,0.12); color: var(--aws-yellow); }
+
+  /* SERVICE PILLS */
+  .service-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .service-pill {
+    background: rgba(255,153,0,0.08);
+    border: 1px solid rgba(255,153,0,0.25);
+    color: var(--aws-text);
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: default;
+    transition: all 0.15s;
+  }
+  .service-pill:hover { background: rgba(255,153,0,0.18); border-color: var(--aws-orange); }
+  .service-pill strong { color: var(--aws-orange); font-family: 'Space Mono', monospace; font-size: 11px; display: block; }
+
+  /* HIGHLIGHT BOXES */
+  .highlight {
+    background: rgba(255,153,0,0.07);
+    border-left: 3px solid var(--aws-orange);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+
+  .highlight.blue { border-left-color: var(--aws-accent); background: rgba(0,212,255,0.07); }
+  .highlight.green { border-left-color: var(--aws-green); background: rgba(57,217,138,0.07); }
+
+  .highlight strong { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.5px; color: var(--aws-orange); }
+  .highlight.blue strong { color: var(--aws-accent); }
+  .highlight.green strong { color: var(--aws-green); }
+
+  /* LIST */
+  ul.checklist { list-style: none; }
+  ul.checklist li {
+    padding: 5px 0;
+    padding-left: 18px;
+    position: relative;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(36,48,64,0.5);
+  }
+  ul.checklist li:last-child { border-bottom: none; }
+  ul.checklist li::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    color: var(--aws-orange);
+    font-size: 8px;
+    top: 7px;
+  }
+
+  /* PERCENT BAR */
+  .domain-row { margin: 10px 0; }
+  .domain-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+  .domain-label span:first-child { color: var(--aws-text); }
+  .domain-label span:last-child { font-family: 'Space Mono', monospace; color: var(--aws-orange); font-size: 11px; }
+  .bar-bg { background: var(--aws-border); height: 6px; }
+  .bar-fill { height: 100%; background: var(--aws-orange); transition: width 0.8s ease; }
+
+  /* COMPARISON TABLE */
+  .compare-header { 
+    background: rgba(255,153,0,0.1); 
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  /* KEY NUMBERS */
+  .kv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kv-item { 
+    background: rgba(255,153,0,0.05);
+    border: 1px solid rgba(255,153,0,0.15);
+    padding: 10px 14px;
+  }
+  .kv-item .kv-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--aws-orange);
+    line-height: 1.2;
+  }
+  .kv-item .kv-key {
+    font-size: 11px;
+    color: var(--aws-muted);
+    margin-top: 3px;
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--aws-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--aws-border);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 1100px) {
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .col-span-3 { grid-column: span 2; }
+  }
+  @media (max-width: 750px) {
+    header { padding: 16px 20px; }
+    main { padding: 20px; }
+    nav { padding: 0 20px; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .col-span-2, .col-span-3 { grid-column: span 1; }
+    header h1 { font-size: 14px; }
+  }
+
+  /* PRINT */
+  @media print {
+    nav, header { position: static; }
+    .section { display: block !important; }
+    .tab { display: none; }
+    body { background: white; color: black; }
+  }
+
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: rgba(255,153,0,0.1);
+    color: var(--aws-orange);
+    padding: 1px 5px;
+  }
+
+  .muted { color: var(--aws-muted); font-size: 12px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="aws-logo">AWS</div>
+    <h1>Cloud Practitioner <span>Cheat Sheet</span></h1>
+  </div>
+  <div class="badge">CLF-C02</div>
+</header>
+
+<nav>
+  <button class="tab active" onclick="showTab('overview')">Overview</button>
+  <button class="tab" onclick="showTab('compute')">Compute</button>
+  <button class="tab" onclick="showTab('storage')">Storage</button>
+  <button class="tab" onclick="showTab('database')">Database</button>
+  <button class="tab" onclick="showTab('network')">Networking</button>
+  <button class="tab" onclick="showTab('security')">Security & IAM</button>
+  <button class="tab" onclick="showTab('billing')">Billing</button>
+  <button class="tab" onclick="showTab('mgmt')">Management</button>
+  <button class="tab" onclick="showTab('shared')">Shared Services</button>
+</nav>
+
+<main>
+
+<!-- ===================== OVERVIEW ===================== -->
+<div id="overview" class="section active">
+  <p class="section-title">Exam Overview & Cloud Fundamentals</p>
+  <div class="grid-3">
+    
+    <div class="card orange">
+      <h2><span class="dot"></span>Exam Details</h2>
+      <div class="kv-grid">
+        <div class="kv-item"><div class="kv-val">65</div><div class="kv-key">Questions</div></div>
+        <div class="kv-item"><div class="kv-val">90</div><div class="kv-key">Minutes</div></div>
+        <div class="kv-item"><div class="kv-val">700</div><div class="kv-key">Passing Score /1000</div></div>
+        <div class="kv-item"><div class="kv-val">$100</div><div class="kv-key">Exam Fee</div></div>
+      </div>
+    </div>
+
+    <div class="card blue col-span-2">
+      <h2><span class="dot"></span>Exam Domains — CLF-C02</h2>
+      <div class="domain-row">
+        <div class="domain-label"><span>Domain 1: Cloud Concepts</span><span>24%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:24%"></div></div>
+      </div>
+      <div class="domain-row">
+        <div class="domain-label"><span>Domain 2: Security & Compliance</span><span>30%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:30%"></div></div>
+      </div>
+      <div class="domain-row">
+        <div class="domain-label"><span>Domain 3: Cloud Technology & Services</span><span>34%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:34%"></div></div>
+      </div>
+      <div class="domain-row">
+        <div class="domain-label"><span>Domain 4: Billing, Pricing & Support</span><span>12%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:12%"></div></div>
+      </div>
+    </div>
+
+    <div class="card green">
+      <h2><span class="dot"></span>6 Advantages of Cloud</h2>
+      <ul class="checklist">
+        <li>Trade capital expense for variable expense</li>
+        <li>Benefit from massive economies of scale</li>
+        <li>Stop guessing capacity</li>
+        <li>Increase speed and agility</li>
+        <li>Stop spending money on data centers</li>
+        <li>Go global in minutes</li>
+      </ul>
+    </div>
+
+    <div class="card purple">
+      <h2><span class="dot"></span>Cloud Deployment Models</h2>
+      <table>
+        <tr><th>Model</th><th>Description</th></tr>
+        <tr><td><span class="tag tag-orange">Public</span></td><td>AWS owns & manages infra; shared resources</td></tr>
+        <tr><td><span class="tag tag-blue">Private</span></td><td>On-premises; dedicated hardware</td></tr>
+        <tr><td><span class="tag tag-green">Hybrid</span></td><td>Mix of on-prem & public cloud</td></tr>
+      </table>
+    </div>
+
+    <div class="card yellow">
+      <h2><span class="dot"></span>Cloud Service Models</h2>
+      <table>
+        <tr><th>Model</th><th>You Manage</th><th>Example</th></tr>
+        <tr><td><span class="tag tag-red">IaaS</span></td><td>OS, apps, data</td><td>EC2</td></tr>
+        <tr><td><span class="tag tag-orange">PaaS</span></td><td>Apps, data</td><td>Elastic Beanstalk</td></tr>
+        <tr><td><span class="tag tag-green">SaaS</span></td><td>Nothing</td><td>Gmail, Salesforce</td></tr>
+      </table>
+    </div>
+
+    <div class="card blue col-span-2">
+      <h2><span class="dot"></span>AWS Global Infrastructure</h2>
+      <table>
+        <tr><th>Concept</th><th>What it is</th><th>Key fact</th></tr>
+        <tr><td><strong>Region</strong></td><td>Geographic area with 2+ AZs</td><td>33+ regions worldwide</td></tr>
+        <tr><td><strong>Availability Zone (AZ)</strong></td><td>One or more discrete data centers</td><td>Physically separated, low-latency links</td></tr>
+        <tr><td><strong>Edge Location</strong></td><td>CDN endpoint for CloudFront</td><td>400+ globally (more than regions)</td></tr>
+        <tr><td><strong>Local Zone</strong></td><td>Extension of region; closer to users</td><td>Single-digit ms latency for compute</td></tr>
+        <tr><td><strong>Wavelength Zone</strong></td><td>AWS compute at 5G network edge</td><td>Ultra-low latency for mobile apps</td></tr>
+      </table>
+    </div>
+
+    <div class="card orange">
+      <h2><span class="dot"></span>AWS Well-Architected Framework</h2>
+      <ul class="checklist">
+        <li><strong>Operational Excellence</strong> — run & monitor systems</li>
+        <li><strong>Security</strong> — protect data & systems</li>
+        <li><strong>Reliability</strong> — recover from failures</li>
+        <li><strong>Performance Efficiency</strong> — use resources efficiently</li>
+        <li><strong>Cost Optimization</strong> — avoid unnecessary costs</li>
+        <li><strong>Sustainability</strong> — minimize environmental impact</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== COMPUTE ===================== -->
+<div id="compute" class="section">
+  <p class="section-title">Compute Services</p>
+  <div class="grid-2">
+
+    <div class="card orange">
+      <h2><span class="dot"></span>EC2 — Elastic Compute Cloud</h2>
+      <table>
+        <tr><th>Pricing Model</th><th>Use When</th><th>Savings</th></tr>
+        <tr><td><span class="tag tag-orange">On-Demand</span></td><td>Short, unpredictable workloads</td><td>Baseline</td></tr>
+        <tr><td><span class="tag tag-green">Reserved</span></td><td>Steady-state 1–3 yr commitment</td><td>Up to 72%</td></tr>
+        <tr><td><span class="tag tag-blue">Savings Plans</span></td><td>Flexible commitment ($/hr)</td><td>Up to 66%</td></tr>
+        <tr><td><span class="tag tag-yellow">Spot</span></td><td>Fault-tolerant, flexible workloads</td><td>Up to 90%</td></tr>
+        <tr><td><span class="tag tag-purple">Dedicated Host</span></td><td>Compliance / licensing needs</td><td>Varies</td></tr>
+      </table>
+      <div class="highlight">
+        <strong>TIP</strong> Spot = cheapest but can be interrupted. Reserved = best for predictable. Dedicated Host = full physical server.
+      </div>
+    </div>
+
+    <div class="card blue">
+      <h2><span class="dot"></span>EC2 Instance Types</h2>
+      <table>
+        <tr><th>Family</th><th>Optimized For</th><th>Example</th></tr>
+        <tr><td>General</td><td>Balanced compute/memory/network</td><td>t3, m6i</td></tr>
+        <tr><td>Compute</td><td>High-perf compute, ML</td><td>c6i, c7g</td></tr>
+        <tr><td>Memory</td><td>In-memory DBs, big data</td><td>r6i, x2idn</td></tr>
+        <tr><td>Storage</td><td>High I/O, sequential throughput</td><td>i4i, d3</td></tr>
+        <tr><td>Accelerated</td><td>ML, GPU, FPGAs</td><td>p4, g5, inf2</td></tr>
+      </table>
+    </div>
+
+    <div class="card green">
+      <h2><span class="dot"></span>Serverless & Container Services</h2>
+      <div class="service-grid">
+        <div class="service-pill"><strong>Lambda</strong>Run code without servers; pay per invocation; 15-min max</div>
+        <div class="service-pill"><strong>ECS</strong>Elastic Container Service; run Docker containers</div>
+        <div class="service-pill"><strong>EKS</strong>Elastic Kubernetes Service; managed K8s</div>
+        <div class="service-pill"><strong>Fargate</strong>Serverless compute for ECS/EKS; no EC2 mgmt</div>
+        <div class="service-pill"><strong>App Runner</strong>Deploy containerized web apps easily</div>
+        <div class="service-pill"><strong>Lightsail</strong>Simple VPS; fixed price; for beginners</div>
+      </div>
+    </div>
+
+    <div class="card purple">
+      <h2><span class="dot"></span>Scaling & Load Balancing</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>Auto Scaling</code></td><td>Automatically add/remove EC2 based on demand</td></tr>
+        <tr><td><code>ALB</code></td><td>Application Load Balancer — HTTP/HTTPS, path/host routing</td></tr>
+        <tr><td><code>NLB</code></td><td>Network Load Balancer — TCP/UDP, ultra-high performance</td></tr>
+        <tr><td><code>GLB</code></td><td>Gateway Load Balancer — 3rd-party appliances (firewalls)</td></tr>
+        <tr><td><code>Elastic Beanstalk</code></td><td>PaaS — deploy & manage apps automatically</td></tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== STORAGE ===================== -->
+<div id="storage" class="section">
+  <p class="section-title">Storage Services</p>
+  <div class="grid-2">
+
+    <div class="card orange col-span-2">
+      <h2><span class="dot"></span>S3 — Simple Storage Service</h2>
+      <table>
+        <tr><th>Storage Class</th><th>Use Case</th><th>Retrieval</th><th>Cost</th></tr>
+        <tr><td><span class="tag tag-orange">S3 Standard</span></td><td>Frequently accessed data</td><td>Instant</td><td>Highest</td></tr>
+        <tr><td><span class="tag tag-blue">S3 Intelligent-Tiering</span></td><td>Unknown or changing access patterns</td><td>Instant</td><td>Auto-optimize</td></tr>
+        <tr><td><span class="tag tag-green">S3 Standard-IA</span></td><td>Infrequent access, rapid retrieval</td><td>Instant</td><td>Lower</td></tr>
+        <tr><td><span class="tag tag-green">S3 One Zone-IA</span></td><td>Infrequent, non-critical data</td><td>Instant</td><td>20% less than IA</td></tr>
+        <tr><td><span class="tag tag-purple">S3 Glacier Instant</span></td><td>Archive, milliseconds retrieval</td><td>Milliseconds</td><td>Low</td></tr>
+        <tr><td><span class="tag tag-purple">S3 Glacier Flexible</span></td><td>Archive, minutes–hours retrieval</td><td>1min–12hr</td><td>Lower</td></tr>
+        <tr><td><span class="tag tag-red">S3 Glacier Deep Archive</span></td><td>Long-term archive (years)</td><td>12–48hr</td><td>Lowest</td></tr>
+      </table>
+      <div class="highlight blue">
+        <strong>KEY FACTS</strong> S3 is object storage (not block/file). Objects up to 5TB. Max single PUT = 5GB (use Multipart for >100MB). Buckets are regional. Durability = 99.999999999% (11 9s).
+      </div>
+    </div>
+
+    <div class="card blue">
+      <h2><span class="dot"></span>Block & File Storage</h2>
+      <table>
+        <tr><th>Service</th><th>Type</th><th>Use Case</th></tr>
+        <tr><td><code>EBS</code></td><td>Block</td><td>Persistent disk for EC2; one AZ</td></tr>
+        <tr><td><code>EFS</code></td><td>File (NFS)</td><td>Shared file system; multi-AZ; Linux</td></tr>
+        <tr><td><code>FSx for Windows</code></td><td>File (SMB)</td><td>Windows file shares; Active Directory</td></tr>
+        <tr><td><code>FSx for Lustre</code></td><td>File</td><td>HPC, ML, fast scratch storage</td></tr>
+        <tr><td><code>Instance Store</code></td><td>Block</td><td>Temp ephemeral; lost on stop/terminate</td></tr>
+      </table>
+    </div>
+
+    <div class="card green">
+      <h2><span class="dot"></span>Data Transfer & Hybrid</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>Storage Gateway</code></td><td>Hybrid; connect on-prem to AWS storage</td></tr>
+        <tr><td><code>DataSync</code></td><td>Automate data transfer to/from AWS</td></tr>
+        <tr><td><code>Snow Family</code></td><td>Physical devices for large data migration</td></tr>
+        <tr><td><code>Transfer Family</code></td><td>SFTP/FTP/FTPS to S3 or EFS</td></tr>
+      </table>
+      <div class="highlight green">
+        <strong>SNOW FAMILY</strong> Snowcone (8TB) → Snowball Edge (80TB) → Snowmobile (100PB)
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== DATABASE ===================== -->
+<div id="database" class="section">
+  <p class="section-title">Database Services</p>
+  <div class="grid-2">
+
+    <div class="card orange">
+      <h2><span class="dot"></span>Relational — RDS & Aurora</h2>
+      <table>
+        <tr><th>Service</th><th>Engines</th><th>Key Benefit</th></tr>
+        <tr><td><code>RDS</code></td><td>MySQL, PostgreSQL, Oracle, MSSQL, MariaDB</td><td>Managed; automated backups</td></tr>
+        <tr><td><code>Aurora</code></td><td>MySQL & PostgreSQL compatible</td><td>5x faster than MySQL, 3x PostgreSQL</td></tr>
+        <tr><td><code>Aurora Serverless</code></td><td>MySQL & PostgreSQL</td><td>Auto-scales; pay per use</td></tr>
+      </table>
+      <div class="highlight">
+        <strong>RDS Multi-AZ</strong> = automatic failover for HA. <strong>Read Replicas</strong> = scale reads, NOT failover.
+      </div>
+    </div>
+
+    <div class="card blue">
+      <h2><span class="dot"></span>NoSQL & Specialized</h2>
+      <table>
+        <tr><th>Service</th><th>Type</th><th>Use Case</th></tr>
+        <tr><td><code>DynamoDB</code></td><td>Key-Value / Document</td><td>Serverless, ms latency at any scale</td></tr>
+        <tr><td><code>ElastiCache</code></td><td>In-Memory (Redis/Memcached)</td><td>Caching, session store</td></tr>
+        <tr><td><code>DocumentDB</code></td><td>Document (MongoDB-compat)</td><td>JSON workloads</td></tr>
+        <tr><td><code>Keyspaces</code></td><td>Wide-column (Cassandra-compat)</td><td>High-scale Cassandra workloads</td></tr>
+        <tr><td><code>Neptune</code></td><td>Graph</td><td>Fraud detection, social networks</td></tr>
+        <tr><td><code>QLDB</code></td><td>Ledger</td><td>Immutable transaction log</td></tr>
+        <tr><td><code>Timestream</code></td><td>Time-series</td><td>IoT, operational metrics</td></tr>
+      </table>
+    </div>
+
+    <div class="card green">
+      <h2><span class="dot"></span>Analytics & Data Warehousing</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>Redshift</code></td><td>Data warehouse; petabyte-scale SQL analytics</td></tr>
+        <tr><td><code>Athena</code></td><td>Query S3 data with SQL; serverless; pay per query</td></tr>
+        <tr><td><code>Glue</code></td><td>ETL service; data catalog</td></tr>
+        <tr><td><code>EMR</code></td><td>Managed Hadoop/Spark for big data</td></tr>
+        <tr><td><code>Kinesis</code></td><td>Real-time data streaming & analytics</td></tr>
+        <tr><td><code>QuickSight</code></td><td>BI / data visualization dashboards</td></tr>
+        <tr><td><code>Lake Formation</code></td><td>Build & secure data lakes on S3</td></tr>
+      </table>
+    </div>
+
+    <div class="card purple">
+      <h2><span class="dot"></span>Database Migration</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>DMS</code></td><td>Database Migration Service; migrate with minimal downtime</td></tr>
+        <tr><td><code>SCT</code></td><td>Schema Conversion Tool; convert between DB engines</td></tr>
+      </table>
+      <div class="highlight">
+        <strong>DMS + SCT</strong> — Use SCT to convert schema (e.g. Oracle → Aurora), then DMS to migrate data.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== NETWORKING ===================== -->
+<div id="network" class="section">
+  <p class="section-title">Networking & Content Delivery</p>
+  <div class="grid-2">
+
+    <div class="card orange">
+      <h2><span class="dot"></span>Core Networking</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>VPC</code></td><td>Virtual Private Cloud; isolated network in AWS</td></tr>
+        <tr><td><code>Subnet</code></td><td>Range of IPs in a VPC; public or private</td></tr>
+        <tr><td><code>Internet Gateway</code></td><td>Enables internet access for public subnets</td></tr>
+        <tr><td><code>NAT Gateway</code></td><td>Allows private subnet to reach internet (outbound only)</td></tr>
+        <tr><td><code>Route Table</code></td><td>Rules to direct network traffic</td></tr>
+        <tr><td><code>VPC Peering</code></td><td>Connect two VPCs privately; non-transitive</td></tr>
+        <tr><td><code>Transit Gateway</code></td><td>Hub-and-spoke: connect many VPCs & on-prem</td></tr>
+      </table>
+    </div>
+
+    <div class="card blue">
+      <h2><span class="dot"></span>Connectivity to On-Premises</h2>
+      <table>
+        <tr><th>Service</th><th>Type</th><th>Speed/Use</th></tr>
+        <tr><td><code>VPN</code></td><td>Encrypted tunnel over internet</td><td>Quick setup; lower cost</td></tr>
+        <tr><td><code>Direct Connect</code></td><td>Dedicated private line to AWS</td><td>Higher bandwidth; consistent latency</td></tr>
+        <tr><td><code>Client VPN</code></td><td>Remote users to VPC</td><td>OpenVPN-based</td></tr>
+      </table>
+      <div class="highlight blue">
+        <strong>EXAM TIP</strong> Direct Connect = private, consistent, high-bandwidth. VPN = encrypted but goes over public internet.
+      </div>
+    </div>
+
+    <div class="card green">
+      <h2><span class="dot"></span>DNS, CDN & Security</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>Route 53</code></td><td>DNS service; health checks; routing policies</td></tr>
+        <tr><td><code>CloudFront</code></td><td>CDN; cache at edge locations globally</td></tr>
+        <tr><td><code>Global Accelerator</code></td><td>Routes traffic via AWS backbone; static anycast IPs</td></tr>
+        <tr><td><code>API Gateway</code></td><td>Create/manage REST & WebSocket APIs</td></tr>
+      </table>
+      <div class="highlight green">
+        <strong>CloudFront vs Global Accelerator</strong> — CloudFront caches content at edge. Global Accelerator routes traffic to nearest endpoint (no caching).
+      </div>
+    </div>
+
+    <div class="card yellow">
+      <h2><span class="dot"></span>Network Security</h2>
+      <table>
+        <tr><th>Feature</th><th>Scope</th><th>Stateful?</th></tr>
+        <tr><td><code>Security Group</code></td><td>EC2 instance level</td><td>Yes (stateful)</td></tr>
+        <tr><td><code>NACL</code></td><td>Subnet level</td><td>No (stateless)</td></tr>
+        <tr><td><code>WAF</code></td><td>Web app firewall; L7; block SQLi, XSS</td><td>—</td></tr>
+        <tr><td><code>Shield Standard</code></td><td>DDoS protection (free, automatic)</td><td>—</td></tr>
+        <tr><td><code>Shield Advanced</code></td><td>Enhanced DDoS + 24/7 DRT support</td><td>—</td></tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== SECURITY ===================== -->
+<div id="security" class="section">
+  <p class="section-title">Security, Identity & Compliance</p>
+  <div class="grid-2">
+
+    <div class="card orange col-span-2">
+      <h2><span class="dot"></span>Shared Responsibility Model</h2>
+      <table>
+        <tr class="compare-header"><th></th><th>AWS Responsible For</th><th>Customer Responsible For</th></tr>
+        <tr><td><span class="tag tag-orange">Security OF the Cloud</span></td><td>Hardware, facilities, networking, hypervisor, managed services</td><td>—</td></tr>
+        <tr><td><span class="tag tag-blue">Security IN the Cloud</span></td><td>—</td><td>OS patches, app config, data, IAM, encryption, network controls</td></tr>
+      </table>
+    </div>
+
+    <div class="card blue">
+      <h2><span class="dot"></span>IAM — Identity & Access Management</h2>
+      <table>
+        <tr><th>Concept</th><th>Description</th></tr>
+        <tr><td><strong>User</strong></td><td>Individual with credentials (console/programmatic)</td></tr>
+        <tr><td><strong>Group</strong></td><td>Collection of users; attach policies to group</td></tr>
+        <tr><td><strong>Role</strong></td><td>Temporary permissions; assumed by services/users</td></tr>
+        <tr><td><strong>Policy</strong></td><td>JSON document defining permissions (Allow/Deny)</td></tr>
+        <tr><td><strong>MFA</strong></td><td>Multi-Factor Auth; always enable on root account</td></tr>
+      </table>
+      <div class="highlight">
+        <strong>LEAST PRIVILEGE</strong> — Grant only the permissions needed. Root account should NEVER be used for daily tasks.
+      </div>
+    </div>
+
+    <div class="card green">
+      <h2><span class="dot"></span>Identity & Federation</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>Cognito</code></td><td>User pools & identity pools for web/mobile apps</td></tr>
+        <tr><td><code>IAM Identity Center</code></td><td>SSO for multiple AWS accounts & apps (formerly SSO)</td></tr>
+        <tr><td><code>Directory Service</code></td><td>Managed Microsoft AD in AWS</td></tr>
+        <tr><td><code>STS</code></td><td>Security Token Service; temporary credentials via AssumeRole</td></tr>
+        <tr><td><code>Organizations</code></td><td>Manage multiple AWS accounts; SCPs; consolidated billing</td></tr>
+      </table>
+    </div>
+
+    <div class="card purple">
+      <h2><span class="dot"></span>Security Services</h2>
+      <table>
+        <tr><th>Service</th><th>What it does</th></tr>
+        <tr><td><code>GuardDuty</code></td><td>Threat detection using ML; analyzes logs</td></tr>
+        <tr><td><code>Inspector</code></td><td>Automated security assessments for EC2/containers</td></tr>
+        <tr><td><code>Macie</code></td><td>Discovers & protects sensitive data (PII) in S3</td></tr>
+        <tr><td><code>Security Hub</code></td><td>Centralized security findings dashboard</td></tr>
+        <tr><td><code>Detective</code></td><td>Investigate security findings; root cause analysis</td></tr>
+        <tr><td><code>Config</code></td><td>Track resource configurations & compliance</td></tr>
+        <tr><td><code>Audit Manager</code></td><td>Automate evidence collection for audits</td></tr>
+        <tr><td><code>Artifact</code></td><td>Access AWS compliance reports & agreements</td></tr>
+      </table>
+    </div>
+
+    <div class="card red">
+      <h2><span class="dot"></span>Encryption & Secrets</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>KMS</code></td><td>Key Management Service; create & control encryption keys</td></tr>
+        <tr><td><code>CloudHSM</code></td><td>Dedicated hardware security module; FIPS 140-2 L3</td></tr>
+        <tr><td><code>Secrets Manager</code></td><td>Store, rotate & retrieve secrets (DB passwords, API keys)</td></tr>
+        <tr><td><code>ACM</code></td><td>AWS Certificate Manager; free SSL/TLS certs</td></tr>
+      </table>
+      <div class="highlight">
+        <strong>KMS vs CloudHSM</strong> — KMS is multi-tenant managed; CloudHSM is single-tenant dedicated hardware you control.
+      </div>
+    </div>
+
+    <div class="card yellow">
+      <h2><span class="dot"></span>Penetration Testing & Compliance</h2>
+      <ul class="checklist">
+        <li>Pen testing allowed on 8 services without prior approval</li>
+        <li><strong>DDoS, port flooding, DNS attacks</strong> are NEVER allowed</li>
+        <li>Compliance programs: PCI DSS, HIPAA, SOC 1/2/3, ISO 27001</li>
+        <li><strong>AWS Artifact</strong> — download compliance reports on-demand</li>
+        <li><strong>AWS Config</strong> — continuous compliance monitoring</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== BILLING ===================== -->
+<div id="billing" class="section">
+  <p class="section-title">Billing, Pricing & Support</p>
+  <div class="grid-2">
+
+    <div class="card orange">
+      <h2><span class="dot"></span>AWS Pricing Fundamentals</h2>
+      <ul class="checklist">
+        <li><strong>Compute</strong> — pay for compute time used</li>
+        <li><strong>Storage</strong> — pay per GB stored</li>
+        <li><strong>Data Transfer</strong> — pay for data OUT; inbound is free</li>
+        <li>No upfront cost to use AWS (pay-as-you-go)</li>
+        <li>Discounts for reserved capacity & volume</li>
+        <li>Free Tier: 12 months, always free, and trials</li>
+      </ul>
+    </div>
+
+    <div class="card blue">
+      <h2><span class="dot"></span>Cost Management Tools</h2>
+      <table>
+        <tr><th>Tool</th><th>Purpose</th></tr>
+        <tr><td><code>Cost Explorer</code></td><td>Visualize & analyze past & future costs</td></tr>
+        <tr><td><code>AWS Budgets</code></td><td>Set alerts when costs exceed threshold</td></tr>
+        <tr><td><code>Cost & Usage Report</code></td><td>Most detailed billing data; exports to S3</td></tr>
+        <tr><td><code>Pricing Calculator</code></td><td>Estimate costs before deploying</td></tr>
+        <tr><td><code>Savings Plans</code></td><td>Flexible commitment for compute savings</td></tr>
+        <tr><td><code>Trusted Advisor</code></td><td>Recommendations on cost, security, performance</td></tr>
+      </table>
+    </div>
+
+    <div class="card green">
+      <h2><span class="dot"></span>Support Plans</h2>
+      <table>
+        <tr><th>Plan</th><th>Price</th><th>Response (critical)</th><th>Key Feature</th></tr>
+        <tr><td><span class="tag tag-green">Basic</span></td><td>Free</td><td>No SLA</td><td>Documentation, forums, 7 core Trusted Advisor checks</td></tr>
+        <tr><td><span class="tag tag-blue">Developer</span></td><td>$29/mo</td><td>&lt; 12 hrs</td><td>Business hours email support; 1 contact</td></tr>
+        <tr><td><span class="tag tag-orange">Business</span></td><td>$100/mo</td><td>&lt; 1 hr</td><td>24/7 phone/email/chat; all Trusted Advisor checks</td></tr>
+        <tr><td><span class="tag tag-purple">Enterprise On-Ramp</span></td><td>$5,500/mo</td><td>&lt; 30 min</td><td>Pool of TAMs; Concierge support</td></tr>
+        <tr><td><span class="tag tag-red">Enterprise</span></td><td>$15,000/mo</td><td>&lt; 15 min</td><td>Dedicated TAM; Concierge; IEM</td></tr>
+      </table>
+    </div>
+
+    <div class="card purple">
+      <h2><span class="dot"></span>AWS Organizations & Accounts</h2>
+      <table>
+        <tr><th>Feature</th><th>Description</th></tr>
+        <tr><td><strong>Consolidated Billing</strong></td><td>One bill for all accounts; volume discounts pool</td></tr>
+        <tr><td><strong>SCP</strong></td><td>Service Control Policies — restrict actions in member accounts</td></tr>
+        <tr><td><strong>OU</strong></td><td>Organizational Unit — group accounts for policy application</td></tr>
+        <tr><td><strong>Management Account</strong></td><td>Root / master account; not for workloads</td></tr>
+      </table>
+      <div class="highlight">
+        <strong>EXAM TIP</strong> SCPs do NOT grant permissions — they only restrict. A Deny in SCP overrides any Allow.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== MANAGEMENT ===================== -->
+<div id="mgmt" class="section">
+  <p class="section-title">Management & Monitoring</p>
+  <div class="grid-2">
+
+    <div class="card orange">
+      <h2><span class="dot"></span>Monitoring & Observability</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>CloudWatch</code></td><td>Metrics, logs, alarms, dashboards for AWS resources</td></tr>
+        <tr><td><code>CloudTrail</code></td><td>Audit log of ALL API calls; who did what & when</td></tr>
+        <tr><td><code>X-Ray</code></td><td>Distributed tracing for microservices debugging</td></tr>
+        <tr><td><code>Health Dashboard</code></td><td>AWS service status & your account's health events</td></tr>
+        <tr><td><code>EventBridge</code></td><td>Event bus; route events between services</td></tr>
+        <tr><td><code>Config</code></td><td>Record configuration changes; evaluate compliance</td></tr>
+      </table>
+      <div class="highlight">
+        <strong>CloudWatch vs CloudTrail</strong> — CloudWatch = performance metrics. CloudTrail = API audit trail (who did what).
+      </div>
+    </div>
+
+    <div class="card blue">
+      <h2><span class="dot"></span>Infrastructure as Code</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>CloudFormation</code></td><td>IaC; deploy AWS resources using YAML/JSON templates</td></tr>
+        <tr><td><code>CDK</code></td><td>Define infra in code (Python, TypeScript, etc.)</td></tr>
+        <tr><td><code>Elastic Beanstalk</code></td><td>PaaS; deploy code, AWS manages infra</td></tr>
+        <tr><td><code>OpsWorks</code></td><td>Configuration management using Chef/Puppet</td></tr>
+        <tr><td><code>Systems Manager</code></td><td>Manage & automate EC2 operations at scale</td></tr>
+      </table>
+    </div>
+
+    <div class="card green">
+      <h2><span class="dot"></span>Developer Tools</h2>
+      <div class="service-grid">
+        <div class="service-pill"><strong>CodeCommit</strong>Managed Git repositories</div>
+        <div class="service-pill"><strong>CodeBuild</strong>Build & test code; managed CI</div>
+        <div class="service-pill"><strong>CodeDeploy</strong>Automated application deployment</div>
+        <div class="service-pill"><strong>CodePipeline</strong>CI/CD pipeline orchestration</div>
+        <div class="service-pill"><strong>CodeStar</strong>Unified CI/CD setup (deprecated)</div>
+        <div class="service-pill"><strong>Cloud9</strong>Cloud IDE in browser</div>
+        <div class="service-pill"><strong>CodeArtifact</strong>Artifact / package repository</div>
+      </div>
+    </div>
+
+    <div class="card purple">
+      <h2><span class="dot"></span>Application Integration</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>SQS</code></td><td>Simple Queue Service; decouple services; pull-based</td></tr>
+        <tr><td><code>SNS</code></td><td>Simple Notification Service; pub/sub; push-based</td></tr>
+        <tr><td><code>SES</code></td><td>Simple Email Service; send marketing/transactional emails</td></tr>
+        <tr><td><code>Step Functions</code></td><td>Orchestrate Lambda & services into workflows</td></tr>
+        <tr><td><code>AppSync</code></td><td>Managed GraphQL APIs</td></tr>
+        <tr><td><code>MQ</code></td><td>Managed message broker (ActiveMQ/RabbitMQ)</td></tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== SHARED SERVICES ===================== -->
+<div id="shared" class="section">
+  <p class="section-title">AI/ML, Other Services & Key Exam Tips</p>
+  <div class="grid-2">
+
+    <div class="card orange">
+      <h2><span class="dot"></span>AI & Machine Learning</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>SageMaker</code></td><td>Build, train, deploy ML models</td></tr>
+        <tr><td><code>Rekognition</code></td><td>Image & video analysis (faces, labels, text)</td></tr>
+        <tr><td><code>Textract</code></td><td>Extract text & data from documents/forms</td></tr>
+        <tr><td><code>Comprehend</code></td><td>NLP; sentiment analysis, key phrase extraction</td></tr>
+        <tr><td><code>Translate</code></td><td>Neural machine translation</td></tr>
+        <tr><td><code>Polly</code></td><td>Text-to-speech</td></tr>
+        <tr><td><code>Lex</code></td><td>Build chatbots (Alexa engine)</td></tr>
+        <tr><td><code>Forecast</code></td><td>Time-series forecasting</td></tr>
+        <tr><td><code>Personalize</code></td><td>Real-time personalization & recommendations</td></tr>
+        <tr><td><code>Bedrock</code></td><td>Access foundation models via API (GenAI)</td></tr>
+        <tr><td><code>Kendra</code></td><td>Intelligent enterprise search (ML-powered)</td></tr>
+      </table>
+    </div>
+
+    <div class="card blue">
+      <h2><span class="dot"></span>End-User Computing & IoT</h2>
+      <table>
+        <tr><th>Service</th><th>Purpose</th></tr>
+        <tr><td><code>WorkSpaces</code></td><td>Managed virtual desktops (DaaS)</td></tr>
+        <tr><td><code>AppStream 2.0</code></td><td>Stream desktop apps to browser; no install needed</td></tr>
+        <tr><td><code>IoT Core</code></td><td>Connect & manage IoT devices at scale</td></tr>
+        <tr><td><code>Greengrass</code></td><td>Run Lambda on IoT edge devices</td></tr>
+      </table>
+      <div class="highlight blue">
+        <strong>WorkSpaces vs AppStream</strong> — WorkSpaces = full desktop. AppStream = stream a specific application.
+      </div>
+    </div>
+
+    <div class="card green col-span-2">
+      <h2><span class="dot"></span>Critical Exam Tips — Things to Know Cold</h2>
+      <div class="grid-2">
+        <ul class="checklist">
+          <li><strong>S3 is NOT a file system</strong> — it's object storage</li>
+          <li><strong>EBS</strong> = single AZ; <strong>EFS</strong> = multi-AZ file system</li>
+          <li><strong>Glacier</strong> is for archives; Standard has 11 9s durability</li>
+          <li><strong>CloudFront</strong> caches; <strong>Global Accelerator</strong> routes (no cache)</li>
+          <li><strong>NAT Gateway</strong> = outbound only for private subnets</li>
+          <li><strong>Security Groups</strong> = stateful; <strong>NACLs</strong> = stateless</li>
+          <li><strong>IAM is global</strong> — not region-specific</li>
+          <li><strong>Root account</strong> = disable & lock down immediately</li>
+          <li><strong>Spot Instances</strong> = cheapest; can be interrupted</li>
+          <li><strong>Reserved = 1 or 3 year commit</strong>; All Upfront = max savings</li>
+        </ul>
+        <ul class="checklist">
+          <li><strong>CloudTrail</strong> = API audit log (compliance)</li>
+          <li><strong>CloudWatch</strong> = metrics & alarms (monitoring)</li>
+          <li><strong>GuardDuty</strong> = threat detection (ML)</li>
+          <li><strong>Inspector</strong> = vulnerability scanning (EC2/containers)</li>
+          <li><strong>Macie</strong> = sensitive data discovery (S3 PII)</li>
+          <li><strong>SQS</strong> = pull-based queue; <strong>SNS</strong> = push pub/sub</li>
+          <li><strong>Direct Connect</strong> > VPN for bandwidth & consistency</li>
+          <li><strong>Business Support</strong> = minimum for Trusted Advisor all checks</li>
+          <li><strong>AWS Artifact</strong> = compliance reports (not Audit Manager)</li>
+          <li><strong>Concierge support</strong> = Enterprise & Enterprise On-Ramp only</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // Animate progress bars on load
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.bar-fill').forEach(bar => {
+      const width = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = width; }, 100);
+    });
+  });
+</script>
+
+</body>
+</html>

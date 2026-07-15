@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>CloudMaster Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:Poppins,sans-serif;background:#0b1220;color:#eef2ff}
+header{position:sticky;top:0;background:#111827dd;backdrop-filter:blur(8px);padding:16px 6%;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:28px;font-weight:700;color:#ffb703}.logo span{color:#fff}
+nav a{color:#d1d5db;text-decoration:none;margin-left:22px}
+.hero{padding:90px 6%;text-align:center;background:linear-gradient(135deg,#0f172a,#1d4ed8)}
+.hero h1{font-size:52px}.hero p{max-width:760px;margin:20px auto;color:#dbeafe}
+.btn{display:inline-block;margin:8px;padding:14px 26px;border-radius:10px;text-decoration:none;font-weight:700}
+.primary{background:#ffb703;color:#111827}.secondary{border:1px solid #fff;color:#fff}
+section{padding:60px 6%}h2{text-align:center;margin-bottom:35px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px}
+.card{background:#172033;border:1px solid #2b3957;border-radius:16px;padding:22px;transition:.3s}
+.card:hover{transform:translateY(-6px);border-color:#ffb703}
+.card img{width:100%;max-width:280px;height:190px;object-fit:contain;object-position:center;border-radius:12px;display:block;margin:0 auto;transition:transform .25s ease,box-shadow .25s ease;cursor:pointer}
+.card:hover img{transform:scale(1.03);box-shadow:0 10px 24px rgba(15,23,42,.16)}
+.card h3{margin:15px 0;color:#ffb703}.card a{display:block;color:#e0f2fe;text-decoration:none;margin:6px 0;transition:color .2s ease}
+.card a:hover{color:#ffe08a}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.gallery-card{background:#172033;border:1px solid #2b3957;border-radius:16px;overflow:hidden}
+.gallery-card img{width:100%;height:220px;object-fit:contain;object-position:center;background:#f8fafc;padding:10px;display:block}
+.gallery-card .content{padding:18px}
+.gallery-card h3{color:#ffb703;margin-bottom:8px}
+.gallery-card p{color:#cbd5e1;line-height:1.6}
+.tab-buttons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.tab-btn{background:#172033;border:1px solid #2b3957;border-radius:999px;padding:12px 18px;color:#fff;cursor:pointer;font-weight:600}
+.tab-btn.active{background:#ffb703;color:#111827;border-color:#ffb703}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.image-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.image-card{background:#172033;border:1px solid #2b3957;border-radius:16px;overflow:hidden}
+.image-card img{width:100%;height:220px;object-fit:contain;object-position:center;background:#ffffff;padding:12px;display:block;border-bottom:1px solid #2b3957;transition:transform .25s ease,filter .25s ease;cursor:pointer}
+.image-card:hover img{transform:scale(1.03);filter:brightness(1.02)}
+.image-card .caption{padding:12px 14px;color:#cbd5e1;font-size:14px;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}
+.stat{text-align:center;background:#172033;padding:25px;border-radius:14px}
+.stat b{display:block;font-size:34px;color:#ffb703}
+.roadmap-accordion{display:grid;gap:14px}
+.roadmap-item{background:#172033;border:1px solid #2b3957;border-radius:16px;overflow:hidden}
+.roadmap-header{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;cursor:pointer;font-weight:600;color:#fff}
+.roadmap-header span:last-child{font-size:18px;color:#ffb703}
+.roadmap-content{display:none;padding:0 20px 20px}
+.roadmap-content ul{list-style:none;display:grid;gap:10px}
+.roadmap-content li{background:#0f172a;border:1px solid #2b3957;border-radius:10px;padding:10px 12px;color:#cbd5e1}
+.roadmap-content li a{color:#e0f2fe;text-decoration:none;transition:color .2s ease}
+.roadmap-content li a:hover{color:#ffe08a}
+.roadmap-content .coming-soon{display:inline-block;margin-top:4px;font-size:13px;color:#fbbf24;font-weight:600}
+.roadmap-item.active .roadmap-content{display:block}
+footer{padding:30px;text-align:center;background:#111827;color:#9ca3af}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(2,6,23,.95);align-items:center;justify-content:center;padding:24px;z-index:9999}
+.lightbox.active{display:flex}
+.lightbox img{max-width:100%;max-height:90vh;width:auto;height:auto;border-radius:16px;object-fit:contain;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.lightbox .close{position:absolute;top:20px;right:24px;font-size:32px;color:#fff;cursor:pointer}
+</style></head>
+<body>
+<header><div class='logo'>CloudMaster <span>Academy</span></div>
+<nav><a href='#'>Home</a><a href='#certifications'>Certifications</a><a href='#resources'>Resources</a><a href='#roadmap'>Roadmap</a></nav></header>
+<section class='hero'>
+<h1>Master AWS Certifications</h1>
+<p>Free AWS Cheat Sheets, Practice Exams, Architecture Diagrams, Scenario-Based Questions and Interview Preparation.</p>
+<a class='btn primary' href='#certifications'>Start Learning</a>
+</section>
+<section id='certifications'><h2>Popular Certifications</h2>
+<div class='grid'>
+<div class='card'><img src='images/AWS-Cloud-Prcatitioner.png' alt='AWS Cloud Practitioner certification image' class='zoomable'><h3>AWS Cloud Practitioner Exam</h3><a href='aws-cloud-prctitioner-cheatsheet.html'>Open Cheat Sheet</a><a href='practice-exam.html?exam=cloud-practitioner'>Practice Exam </a></div>
+<div class='card'><img src='images/AWS-AI-Practitioner.png' alt='AWS AI Practitioner certification image' class='zoomable'><h3>AWS AI Practitioner Exam</h3><a href='aws-ai-practitioner-cheatsheet.html'>Open Cheat Sheet</a><a href='practice-exam.html?exam=ai-practitioner'>Practice Exam </a></div>
+<div class='card'><img src='images/AWS-Solution-Archtect-Associate.png' alt='AWS Solutions Architect Associate certification image' class='zoomable'><h3>AWS Solutions Architect Associate Exam</h3><a href='aws-saa-cheatsheet.html'>Open Cheat Sheet</a><a href='practice-exam.html?exam=sa-associate'>Practice Exam </a></div>
+<div class='card'><img src='images/AWS-Solution-Architect-Professional.png' alt='AWS Solutions Architect Professional certification image' class='zoomable'><h3>AWS Solutions Architect Professional Exam</h3>
+<a href='aws-sap-c02-cheatsheet.html'>Cheat Sheet</a>
+<a href='aws-sap-c02-keywords.html'>Keyword Decoder</a>
+<a href='practice-exam.html?exam=sap-c02'>Practice Exam 1</a>
+<a href='aws_sapc02_practice_exam.html'>Practice Exam 2</a>
+</div></div></section>
+<section id='resources'><h2>Featured Resources</h2>
+<div class='grid'>
+<div class='card'><h3>📘 Cheat Sheets</h3><p>One-page summaries for fast revision before exams.</p></div>
+<div class='card'><h3>🎯 Scenario Questions</h3><p>Real-world case studies to practice exam-style thinking.</p></div>
+<div class='card'><h3>🏗 Architecture Diagrams</h3><p>Visual references for services, networking, and deployment patterns.</p></div>
+<div class='card'><h3>💡 Keyword Decoder</h3><p>Quick memory aids for important AWS terms and service names.</p></div>
+</div></section>
+<section id='roadmap'><h2>Learning Roadmap</h2><div class='roadmap-accordion'>
+<div class='roadmap-item'>
+<div class='roadmap-header'><span>Practitioner</span><span>+</span></div>
+<div class='roadmap-content'><ul><li><a href='aws-cloud-prctitioner-cheatsheet.html'>AWS Cloud Practitioner</a></li><li><a href='aws-ai-practitioner-cheatsheet.html'>AWS AI Practitioner</a></li></ul></div></div>
+<div class='roadmap-item'>
+<div class='roadmap-header'><span>Associate</span><span>+</span></div>
+<div class='roadmap-content'><ul><li><a href='aws-saa-cheatsheet.html'>AWS Solutions Architect Associate</a></li><li>AWS Developer Associate <span class='coming-soon'>Coming soon</span></li><li>AWS SysOps Administrator Associate <span class='coming-soon'>Coming soon</span></li></ul></div></div>
+<div class='roadmap-item'>
+<div class='roadmap-header'><span>Professional</span><span>+</span></div>
+<div class='roadmap-content'><ul><li><a href='aws-sap-c02-cheatsheet.html'>AWS Solutions Architect Professional</a></li><li>AWS DevOps Engineer Professional <span class='coming-soon'>Coming soon</span></li></ul></div></div>
+<div class='roadmap-item'>
+<div class='roadmap-header'><span>Specialty</span><span>+</span></div>
+<div class='roadmap-content'><ul><li>AWS Security Specialty <span class='coming-soon'>Coming soon</span></li><li>AWS Machine Learning Specialty <span class='coming-soon'>Coming soon</span></li><li>AWS Advanced Networking Specialty <span class='coming-soon'>Coming soon</span></li></ul></div></div>
+</div></section>
+<section><h2>Visual Learning Gallery</h2><div class='tab-buttons'>
+<button class='tab-btn active' data-target='ai-panel'>AI Screenshots</button>
+<button class='tab-btn' data-target='professional-panel'>Professional Screenshots</button>
+</div>
+<div id='ai-panel' class='tab-panel active'><div class='image-grid'>
+<div class='image-card'><img src='images/AI-Exam/aws-sagemaker-summary-1.jpeg' alt='AWS SageMaker summary screenshot' class='zoomable'><div class='caption'>SageMaker summary 1</div></div>
+<div class='image-card'><img src='images/AI-Exam/aws-sagemaker-summary-2.png' alt='AWS SageMaker summary screenshot' class='zoomable'><div class='caption'>SageMaker summary 2</div></div>
+<div class='image-card'><img src='images/AI-Exam/aws-mlops-example.jpeg' alt='AWS MLOps example screenshot' class='zoomable'><div class='caption'>MLOps example</div></div>
+<div class='image-card'><img src='images/AI-Exam/hcd-for-explainable-ai.jpeg' alt='Human-centered design for explainable AI screenshot' class='zoomable'><div class='caption'>Explainable AI concept</div></div>
+<div class='image-card'><img src='images/AI-Exam/aws-compliance.png' alt='AWS compliance screenshot' class='zoomable'><div class='caption'>Compliance overview</div></div>
+<div class='image-card'><img src='images/AI-Exam/aws-tool-for-governance.png' alt='AWS governance tool screenshot' class='zoomable'><div class='caption'>Governance tool</div></div>
+<div class='image-card'><img src='images/AI-Exam/Generative-ai-security-scope.png' alt='Generative AI security scope screenshot' class='zoomable'><div class='caption'>Generative AI security scope</div></div>
+<div class='image-card'><img src='images/AI-Exam/aws-ai-managed-services.png' alt='AWS AI managed services screenshot' class='zoomable'><div class='caption'>AI managed services</div></div>
+</div></div>
+<div id='professional-panel' class='tab-panel'><div class='image-grid'>
+<div class='image-card'><img src='images/AWS-Professional/aws-support-plan.png' alt='AWS support plan screenshot' class='zoomable'><div class='caption'>Support plan overview</div></div>
+<div class='image-card'><img src='images/AWS-Professional/aws-storage-gateway.png' alt='AWS Storage Gateway screenshot' class='zoomable'><div class='caption'>Storage Gateway concept</div></div>
+<div class='image-card'><img src='images/AWS-Professional/aws-comparison-chart.png' alt='AWS comparison chart screenshot' class='zoomable'><div class='caption'>Comparison chart</div></div>
+<div class='image-card'><img src='images/AWS-Professional/aws-shared-responsibility-model-diagram.png' alt='AWS shared responsibility diagram' class='zoomable'><div class='caption'>Shared responsibility model</div></div>
+<div class='image-card'><img src='images/AWS-Professional/aws-s3-storage-class-comparison.png' alt='AWS S3 storage class comparison screenshot' class='zoomable'><div class='caption'>S3 storage class comparison</div></div>
+</div></div></section>
+<section><h2>Platform Statistics</h2><div class='stats'>
+<div class='stat'><b>1000+</b>Practice Questions</div>
+<div class='stat'><b>200+</b>Scenario Questions</div>
+<div class='stat'><b>100+</b>Architecture Diagrams</div>
+<div class='stat'><b>20+</b>Cheat Sheets</div>
+</div></section>
+<footer>© 2026 CloudMaster Academy • Independent educational resource. Not affiliated with Amazon Web Services.</footer>
+<div class='lightbox' id='imageLightbox'>
+  <span class='close'>&times;</span>
+  <img id='lightboxImage' src='' alt='Expanded view'>
+</div>
+<script>
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabPanels = document.querySelectorAll('.tab-panel');
+const lightbox = document.getElementById('imageLightbox');
+const lightboxImage = document.getElementById('lightboxImage');
+const closeBtn = document.querySelector('.lightbox .close');
+const zoomables = document.querySelectorAll('.zoomable');
+const roadmapHeaders = document.querySelectorAll('.roadmap-header');
+
+tabButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const targetId = button.getAttribute('data-target');
+
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabPanels.forEach(panel => panel.classList.remove('active'));
+
+    button.classList.add('active');
+    document.getElementById(targetId).classList.add('active');
+  });
+});
+
+zoomables.forEach(img => {
+  img.addEventListener('click', () => {
+    lightboxImage.src = img.src;
+    lightbox.classList.add('active');
+  });
+});
+
+closeBtn.addEventListener('click', () => {
+  lightbox.classList.remove('active');
+});
+
+roadmapHeaders.forEach(header => {
+  header.addEventListener('click', () => {
+    const item = header.parentElement;
+    const isOpen = item.classList.contains('active');
+
+    document.querySelectorAll('.roadmap-item').forEach(entry => entry.classList.remove('active'));
+
+    if (!isOpen) {
+      item.classList.add('active');
+    }
+  });
+});
+
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox) {
+    lightbox.classList.remove('active');
+  }
+});
+</script>
+</body></html>
